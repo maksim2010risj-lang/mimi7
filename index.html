@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Storage Access</title>
+    <style>
+        :root { --bg: #0f172a; --card: #1e293b; --primary: #38bdf8; --err: #f43f5e; --ok: #10b981; --warn: #fbbf24; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg); color: white; font-family: system-ui, -apple-system, sans-serif; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; margin: 0; user-select: none; padding: 20px; }
+
+        .l-box { position: absolute; top: 20px; right: 20px; display: flex; background: #334155; border-radius: 12px; padding: 4px; border: 1px solid rgba(255,255,255,0.1); }
+        .l-btn { padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: bold; color: #94a3b8; transition: 0.2s; }
+        .l-btn.active { background: var(--primary); color: var(--bg); }
+
+        .logo { font-size: 20px; font-weight: bold; margin-bottom: 20px; background: #334155; padding: 12px; border-radius: 15px; border: 2px solid #000; text-align: center; width: 100%; max-width: 360px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .box { background: var(--card); padding: 25px; border-radius: 24px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); width: 100%; max-width: 380px; border: 1px solid rgba(255,255,255,0.1); position: relative; }
+
+        input { width: 100%; padding: 16px; margin: 10px 0; border-radius: 14px; border: 1px solid #334155; background: #0f172a; color: white; font-size: 16px; outline: none; }
+        button { width: 100%; padding: 16px; border-radius: 14px; border: none; background: var(--primary); color: #0f172a; font-weight: bold; cursor: pointer; font-size: 16px; margin-bottom: 10px; }
+
+        .tg-link { background: rgba(56, 189, 248, 0.08); border: 2px solid var(--primary); color: var(--primary); display: flex; align-items: center; justify-content: center; text-decoration: none; padding: 14px; border-radius: 14px; font-weight: bold; font-size: 14px; }
+        .instr-card { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 16px; text-align: left; font-size: 14px; margin-top: 15px; border: 1px dashed #475569; line-height: 1.4; }
+
+        .adm-btn { font-size: 12px; color: #475569; cursor: pointer; margin-top: 25px; display: inline-block; text-decoration: none; transition: 0.3s; }
+        .adm-btn:hover { color: var(--primary); }
+
+        #maintenance { display: none; text-align: center; animation: fadeIn 0.5s ease; }
+        #maintenance h1 { color: var(--warn); font-size: 28px; margin-bottom: 10px; }
+        #maintenance p { color: #94a3b8; margin-bottom: 20px; }
+
+        .hidden { display: none !important; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body oncontextmenu="return false">
+
+    <div id="maintenance">
+        <h1 id="t-maint-h">ТЕХНИЧЕСКИЙ ПЕРЕРЫВ</h1>
+        <p id="t-maint-p">Сайт временно недоступен. Мы скоро вернемся!</p>
+        <span class="adm-btn" onclick="_adm()">⚙️ Admin Panel</span>
+    </div>
+
+    <div id="main-ui">
+        <div class="l-box">
+            <div class="l-btn active" id="b-rus" onclick="_lang('RUS')">RUS</div>
+            <div class="l-btn" id="b-eng" onclick="_lang('ENG')">ENG</div>
+        </div>
+
+        <div class="logo">@mimimimimoooo7</div>
+
+        <div id="p-login" class="box">
+            <h2 id="t-login-h">Введите пароль</h2>
+            <div id="err-msg" style="color:var(--err); font-size:13px; margin-bottom:10px; display:none; font-weight:bold;">❌ ОШИБКА</div>
+            <input type="password" id="pass-in" placeholder="...">
+            <button onclick="_check()" id="t-btn-login">ВОЙТИ</button>
+            <a href="https://t.me/mimimimimoooo7" target="_blank" class="tg-link" id="t-tg-get">УЗНАТЬ ПАРОЛЬ В ТГ</a>
+            <span class="adm-btn" onclick="_adm()">⚙️ Admin Panel</span>
+        </div>
+
+        <div id="p-data" class="box hidden">
+            <h2 id="t-data-h">Данные</h2>
+            <div style="background:#0f172a; padding:15px; border-radius:14px; margin-bottom:15px; border: 1px solid rgba(255,255,255,0.05);">
+                <div style="font-size:12px; color:#64748b; margin-bottom:4px;" id="t-mail-label">Email:</div>
+                <div id="disp-m" style="font-weight:bold; margin-bottom:12px; font-size: 17px; letter-spacing: 0.5px;"></div>
+                <div style="font-size:12px; color:#64748b; margin-bottom:4px;" id="t-pass-label">Password:</div>
+                <div id="disp-p" style="color:var(--primary); font-family:monospace; font-size: 20px; font-weight: bold;"></div>
+            </div>
+
+            <div class="instr-card" id="t-instr-html"></div>
+
+            <a href="https://t.me/mimimimimoooo7" target="_blank" class="tg-link" style="margin-top:15px;">
+                <span id="t-tg-sub">ПОДПИШИСЬ НА МОЙ ТГ</span>
+            </a>
+            <span class="adm-btn" onclick="_adm()">⚙️ Admin Panel</span>
+        </div>
+    </div>
+
+    <div id="adm-box" class="box hidden" style="margin-top:20px; border: 2px solid var(--ok);">
+        <h3 id="t-adm-h" style="margin-top:0;">Admin Panel</h3>
+        <input type="text" id="in-m" placeholder="New Mail">
+        <input type="text" id="in-p" placeholder="New Account Pass">
+        <input type="text" id="in-s" placeholder="New Site Pass">
+        <button onclick="_save()" style="background:var(--ok); color:white;">СОХРАНИТЬ</button>
+        <button onclick="_toggleOff()" id="t-off-btn" style="background:var(--err); color:white;">ВЫКЛЮЧИТЬ САЙТ</button>
+        <button onclick="location.reload()" style="background:#475569; color:white;">ЗАКРЫТЬ</button>
+    </div>
+
+    <script>
+        // Улучшенное шифрование (Base64 + Shift)
+        const _enc = (s) => btoa(s.split('').map(c => String.fromCharCode(c.charCodeAt(0) + 1)).join(''));
+        const _dec = (s) => atob(s).split('').map(c => String.fromCharCode(c.charCodeAt(0) - 1)).join('');
+
+        let s_dat = {
+            m: _enc("jabosik02@gmail.com"),
+            p: _enc("Jaabka13233)"),
+            s: _enc("1212mimi"),
+            a: _enc("2010Max0102")
+        };
+
+        let cur_m = localStorage.getItem('m') || _dec(s_dat.m);
+        let cur_p = localStorage.getItem('p') || _dec(s_dat.p);
+        let cur_s = localStorage.getItem('s') || _dec(s_dat.s);
+        let is_off = localStorage.getItem('off') === 'true';
+        let lang = 'RUS';
+
+        const tr = {
+            RUS: {
+                loginH: "Введите пароль", loginB: "ВОЙТИ", tgG: "УЗНАТЬ ПАРОЛЬ В ТГ", dataH: "Ваш аккаунт",
+                mLab: "Почта:", pLab: "Пароль:", sub: "ПОДПИШИСЬ НА МОЙ ТГ", mH: "ТЕХНИЧЕСКИЙ ПЕРЕРЫВ",
+                mP: "Сайт временно недоступен. Мы скоро вернемся!", offB: "ВЫКЛЮЧИТЬ САЙТ", onB: "ВКЛЮЧИТЬ САЙТ",
+                instr: `<b>💎 Инструкция:</b><br>1. В AppStore нажмите на аватар.<br>2. Листайте вниз -> <b>Выйти</b>.<br>3. Листайте вверх -> <b>Войти</b> (введите данные выше).<br>4. Вкладка <b>Apps</b> -> Minecraft -> Облако.<br>5. После установки выйдите и вернитесь в свой аккаунт.<br><br>💬 Вопросы: <b>@Maksim14215</b>`
+            },
+            ENG: {
+                loginH: "Enter Password", loginB: "LOGIN", tgG: "GET PASS IN TG", dataH: "Your Account",
+                mLab: "Email:", pLab: "Password:", sub: "SUBSCRIBE TO MY TG", mH: "MAINTENANCE",
+                mP: "Site is currently unavailable. Be back soon!", offB: "TURN OFF SITE", onB: "TURN ON SITE",
+                instr: `<b>💎 Manual:</b><br>1. In AppStore tap your profile.<br>2. Scroll to bottom -> <b>Sign Out</b>.<br>3. Scroll up -> <b>Sign In</b> (use data above).<br>4. <b>Apps</b> tab -> Minecraft -> Cloud icon.<br>5. After install, sign out and return to your ID.<br><br>💬 Support: <b>@Maksim14215</b>`
+            }
+        };
+
+        function _lang(l) {
+            lang = l;
+            document.getElementById('b-rus').classList.toggle('active', l === 'RUS');
+            document.getElementById('b-eng').classList.toggle('active', l === 'ENG');
+            const t = tr[lang];
+            document.getElementById('t-login-h').innerText = t.loginH;
+            document.getElementById('t-btn-login').innerText = t.loginB;
+            document.getElementById('t-tg-get').innerText = t.tgG;
+            document.getElementById('t-data-h').innerText = t.dataH;
+            document.getElementById('t-mail-label').innerText = t.mLab;
+            document.getElementById('t-pass-label').innerText = t.pLab;
+            document.getElementById('t-instr-html').innerHTML = t.instr;
+            document.getElementById('t-tg-sub').innerText = t.sub;
+            document.getElementById('t-maint-h').innerText = t.mH;
+            document.getElementById('t-maint-p').innerText = t.mP;
+            document.getElementById('t-off-btn').innerText = is_off ? t.onB : t.offB;
+        }
+
+        function _check() {
+            if (document.getElementById('pass-in').value === cur_s) {
+                document.getElementById('p-login').classList.add('hidden');
+                document.getElementById('p-data').classList.remove('hidden');
+                document.getElementById('disp-m').innerText = cur_m;
+                document.getElementById('disp-p').innerText = cur_p;
+            } else {
+                document.getElementById('err-msg').style.display = 'block';
+                document.getElementById('pass-in').value = '';
+            }
+        }
+
+        function _adm() {
+            let p = prompt("Admin Code:");
+            if (p && p === _dec(s_dat.a)) {
+                document.getElementById('adm-box').classList.remove('hidden');
+                document.getElementById('main-ui').classList.add('hidden');
+                document.getElementById('maintenance').classList.add('hidden');
+            } else if (p) { alert("Access Denied"); }
+        }
+
+        function _save() {
+            cur_m = document.getElementById('in-m').value || cur_m;
+            cur_p = document.getElementById('in-p').value || cur_p;
+            cur_s = document.getElementById('in-s').value || cur_s;
+            localStorage.setItem('m', cur_m); localStorage.setItem('p', cur_p); localStorage.setItem('s', cur_s);
+            alert("Settings Saved!"); location.reload();
+        }
+
+        function _toggleOff() {
+            is_off = !is_off;
+            localStorage.setItem('off', is_off);
+            location.reload();
+        }
+
+        if (is_off) {
+            document.getElementById('main-ui').classList.add('hidden');
+            document.getElementById('maintenance').style.display = 'block';
+        }
+
+        _lang('RUS');
+        document.getElementById('pass-in').addEventListener('keypress', (e) => { if (e.key === 'Enter') _check(); });
+    </script>
+</body>
+</html>
