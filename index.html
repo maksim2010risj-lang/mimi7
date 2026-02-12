@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        body { background: #0b0e14; color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        body { background: #0b0e14; color: white; font-family: 'Inter', sans-serif; }
         .glass { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
         .hidden-node { display: none !important; }
         .input-style { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); transition: all 0.3s; }
@@ -27,7 +27,6 @@
     </div>
 
     <div id="main-card" class="glass p-8 rounded-[2.5rem] w-full max-w-sm text-center animate-fade opacity-0">
-        
         <div id="off-screen" class="hidden-node py-10">
             <h1 id="off-title" class="text-xl font-medium text-gray-400">Сайт на техобслуживании</h1>
         </div>
@@ -35,9 +34,8 @@
         <div id="login-screen">
             <div class="mb-8"><h2 id="h-title" class="text-xl font-medium text-white/90">Введите пароль</h2></div>
             <input type="password" id="passInput" class="input-style w-full p-4 rounded-2xl mb-3 text-center tracking-[0.5em]" placeholder="••••••">
-            <button onclick="handleLogin()" id="btn-login" class="w-full bg-indigo-600 hover:bg-indigo-500 py-4 rounded-2xl font-bold mb-3 transition-all active:scale-95">Войти</button>
+            <button onclick="handleLogin()" id="btn-login" class="w-full bg-indigo-600 hover:bg-indigo-500 py-4 rounded-2xl font-bold mb-3">Войти</button>
             <button onclick="window.location.href='https://t.me/mimimimimoooo7'" class="w-full bg-white/5 hover:bg-white/10 py-4 rounded-2xl font-medium flex items-center justify-center gap-3 transition-all border border-white/5">
-                <svg class="w-5 h-5 text-sky-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.14-.26.26-.534.26l.195-2.822 5.132-4.634c.223-.198-.048-.307-.346-.11l-6.342 3.992-2.733-.855c-.594-.186-.605-.594.124-.878l10.682-4.116c.495-.181.928.114.776.871z"/></svg>
                 <span id="btn-tg" class="text-sm text-white/70">Узнать пароль</span>
             </button>
         </div>
@@ -45,52 +43,33 @@
         <div id="data-screen" class="hidden-node animate-fade">
             <div class="space-y-3">
                 <div class="bg-white/5 p-5 rounded-3xl border border-white/5 flex justify-between items-center text-left">
-                    <div>
-                        <p class="text-[10px] text-gray-500 uppercase mb-1 tracking-widest">Email</p>
-                        <p id="res-email" class="font-mono text-white text-sm">---</p>
-                    </div>
-                    <button onclick="copyToClipboard('res-email', this)" class="opacity-40 hover:opacity-100 p-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg></button>
+                    <div><p class="text-[10px] text-gray-500 uppercase mb-1">Email</p><p id="res-email" class="font-mono text-white text-sm">---</p></div>
+                    <button onclick="copyToClipboard('res-email', this)" class="opacity-40 hover:opacity-100 p-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
                 </div>
                 <div class="bg-white/5 p-5 rounded-3xl border border-white/5 flex justify-between items-center text-left">
-                    <div>
-                        <p class="text-[10px] text-gray-500 uppercase mb-1 tracking-widest">Password</p>
-                        <p id="res-pass" class="font-mono text-white text-sm">---</p>
-                    </div>
-                    <button onclick="copyToClipboard('res-pass', this)" class="opacity-40 hover:opacity-100 p-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg></button>
+                    <div><p class="text-[10px] text-gray-500 uppercase mb-1">Password</p><p id="res-pass" class="font-mono text-white text-sm">---</p></div>
+                    <button onclick="copyToClipboard('res-pass', this)" class="opacity-40 hover:opacity-100 p-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
                 </div>
             </div>
-            <button onclick="location.reload()" class="mt-8 text-gray-500 text-xs uppercase hover:text-white transition-colors">Выход</button>
+            <button onclick="location.reload()" class="mt-8 text-gray-500 text-xs uppercase hover:text-white">Выход</button>
         </div>
     </div>
 
     <div id="admin-modal" class="hidden-node fixed inset-0 bg-black/95 backdrop-blur-xl flex items-center justify-center z-[100] p-6">
         <div class="glass p-8 rounded-[2.5rem] w-full max-w-sm border-white/10 border">
             <h3 class="text-lg font-medium text-white mb-6">Админ-панель</h3>
-            <div class="space-y-4">
-                <div class="space-y-1">
-                    <label class="text-[10px] text-gray-500 ml-2">Email пользователя</label>
-                    <input type="text" id="adm-mail" class="w-full bg-white/5 p-4 rounded-xl border border-white/10 text-sm">
-                </div>
-                <div class="space-y-1">
-                    <label class="text-[10px] text-gray-500 ml-2">Пароль от почты</label>
-                    <input type="text" id="adm-epass" class="w-full bg-white/5 p-4 rounded-xl border border-white/10 text-sm">
-                </div>
-                <div class="space-y-1">
-                    <label class="text-[10px] text-gray-500 ml-2">Пароль от сайта</label>
-                    <input type="text" id="adm-spass" class="w-full bg-white/5 p-4 rounded-xl border border-white/10 text-sm">
-                </div>
-                <div class="flex items-center justify-between px-3 py-3 bg-white/5 rounded-xl text-xs text-gray-400">
-                    <span>Сайт активен</span>
-                    <input type="checkbox" id="adm-active" class="w-5 h-5 accent-indigo-500 cursor-pointer">
-                </div>
-                <button onclick="saveChanges()" id="saveBtn" class="w-full bg-indigo-600 py-4 rounded-xl font-bold transition-all active:scale-95">СОХРАНИТЬ В ОБЛАКО</button>
-                <button onclick="closeAdmin()" class="w-full text-gray-600 text-[10px] py-2 uppercase tracking-tighter">Отмена</button>
+            <div class="space-y-4 text-left">
+                <div><label class="text-[10px] text-gray-500 ml-1">Email</label><input type="text" id="adm-mail" class="w-full bg-white/5 p-4 rounded-xl border border-white/10 text-sm"></div>
+                <div><label class="text-[10px] text-gray-500 ml-1">Email Pass</label><input type="text" id="adm-epass" class="w-full bg-white/5 p-4 rounded-xl border border-white/10 text-sm"></div>
+                <div><label class="text-[10px] text-gray-500 ml-1">Site Pass</label><input type="text" id="adm-spass" class="w-full bg-white/5 p-4 rounded-xl border border-white/10 text-sm"></div>
+                <div class="flex items-center justify-between px-3 py-3 bg-white/5 rounded-xl text-xs text-gray-400"><span>Сайт активен</span><input type="checkbox" id="adm-active" class="w-5 h-5 accent-indigo-500"></div>
+                <button onclick="saveChanges()" id="saveBtn" class="w-full bg-indigo-600 py-4 rounded-xl font-bold">СОХРАНИТЬ</button>
+                <button onclick="closeAdmin()" class="w-full text-gray-600 text-[10px] py-2 uppercase">Отмена</button>
             </div>
         </div>
     </div>
 
     <script>
-        // --- КОНФИГ СУПАБЕЙС ---
         const SB_URL = "https://ezqwyxcybuqhjsnjpuoe.supabase.co";
         const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6cXd5eGN5YnVxaGpzbmpwdW9lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5MDExMTIsImV4cCI6MjA4NjQ3NzExMn0.BX7jXhMzSAef3ln5wy8le6nG45me4KnFRbi66482uYo";
         const _supabase = supabase.createClient(SB_URL, SB_KEY);
@@ -100,84 +79,48 @@
 
         async function init() {
             const { data, error } = await _supabase.from('settings').select('*').eq('id', 1).single();
-            if (error) {
-                console.error("Database Error:", error);
-                return;
-            }
-            
-            config = {
-                sitePass: data.site_pass,
-                email: data.email,
-                emailPass: data.email_pass,
-                active: data.active,
-                adminKey: data.admin_key,
-                lang: data.lang || 'ru'
-            };
-
-            if (!config.active) {
-                document.getElementById('login-screen').classList.add('hidden-node');
-                document.getElementById('off-screen').classList.remove('hidden-node');
-            }
+            if (error) return;
+            config = { sitePass: data.site_pass, email: data.email, emailPass: data.email_pass, active: data.active, adminKey: data.admin_key, lang: data.lang || 'ru' };
+            if (!config.active) { document.getElementById('login-screen').classList.add('hidden-node'); document.getElementById('off-screen').classList.remove('hidden-node'); }
             applyLang();
             document.getElementById('main-card').classList.remove('opacity-0');
         }
 
-        function handleLangClick() {
-            clickCount++;
-            toggleLang();
-            if (clickCount >= 15) { clickCount = 0; askAdminPass(); }
-        }
+        function handleLangClick() { clickCount++; toggleLang(); if (clickCount >= 15) { clickCount = 0; askAdminPass(); } }
 
         function handleLogin() {
-            const val = document.getElementById('passInput').value;
-            if(val === config.sitePass) {
+            if(document.getElementById('passInput').value === config.sitePass) {
                 document.getElementById('login-screen').classList.add('hidden-node');
                 document.getElementById('data-screen').classList.remove('hidden-node');
                 document.getElementById('res-email').innerText = config.email;
                 document.getElementById('res-pass').innerText = config.emailPass;
-            } else { alert(config.lang === 'ru' ? "Неверный пароль" : "Wrong password"); }
+            } else { alert("Ошибка"); }
         }
 
         async function saveChanges() {
             const btn = document.getElementById('saveBtn');
-            const oldText = btn.innerText;
-            btn.innerText = "СИНХРОНИЗАЦИЯ...";
+            btn.innerText = "СОХРАНЕНИЕ...";
             btn.disabled = true;
-
             try {
                 const updates = {
                     email: document.getElementById('adm-mail').value,
                     email_pass: document.getElementById('adm-epass').value,
-                    site_pass: document.getElementById('adm-spass').value, // Правильное имя ID!
+                    site_pass: document.getElementById('adm-spass').value,
                     active: document.getElementById('adm-active').checked
                 };
-
                 const { error } = await _supabase.from('settings').update(updates).eq('id', 1);
-                
                 if (error) throw error;
-
-                alert("Готово! Данные обновлены.");
                 location.reload();
-            } catch (err) {
-                console.error("Save error:", err);
-                alert("Ошибка: " + (err.message || "Не удалось сохранить"));
-                btn.innerText = oldText;
+            } catch (e) {
+                alert("Ошибка БД: " + e.message);
+                btn.innerText = "СОХРАНИТЬ";
                 btn.disabled = false;
             }
         }
 
-        function copyToClipboard(id, btn) {
-            const text = document.getElementById(id).innerText;
-            navigator.clipboard.writeText(text).then(() => {
-                const old = btn.innerHTML;
-                btn.innerHTML = '<svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
-                setTimeout(() => btn.innerHTML = old, 1500);
-            });
-        }
-
         function askAdminPass() {
-            const pass = prompt("ADMIN ACCESS:");
-            if(pass === config.adminKey) {
+            const p = prompt("ADMIN PASS:");
+            if(p === config.adminKey) {
                 document.getElementById('admin-modal').classList.remove('hidden-node');
                 document.getElementById('adm-mail').value = config.email;
                 document.getElementById('adm-epass').value = config.emailPass;
@@ -186,18 +129,24 @@
             }
         }
 
-        function toggleLang() { config.lang = config.lang === 'ru' ? 'en' : 'ru'; applyLang(); }
-        function closeAdmin() { document.getElementById('admin-modal').classList.add('hidden-node'); }
-
-        function applyLang() {
-            const isRu = config.lang === 'ru';
-            document.getElementById('dot').style.left = isRu ? '4px' : '24px';
-            document.getElementById('h-title').innerText = isRu ? "Введите пароль" : "Enter Password";
-            document.getElementById('btn-login').innerText = isRu ? "Войти" : "Login";
-            document.getElementById('btn-tg').innerText = isRu ? "Узнать пароль" : "Get Password";
-            document.getElementById('off-title').innerText = isRu ? "Сайт на техобслуживании" : "Site is under maintenance";
+        function copyToClipboard(id, btn) {
+            navigator.clipboard.writeText(document.getElementById(id).innerText).then(() => {
+                const old = btn.innerHTML;
+                btn.innerHTML = '<svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
+                setTimeout(() => btn.innerHTML = old, 1500);
+            });
         }
 
+        function toggleLang() { config.lang = config.lang === 'ru' ? 'en' : 'ru'; applyLang(); }
+        function closeAdmin() { document.getElementById('admin-modal').classList.add('hidden-node'); }
+        function applyLang() {
+            const r = config.lang === 'ru';
+            document.getElementById('dot').style.left = r ? '4px' : '24px';
+            document.getElementById('h-title').innerText = r ? "Введите пароль" : "Enter Password";
+            document.getElementById('btn-login').innerText = r ? "Войти" : "Login";
+            document.getElementById('btn-tg').innerText = r ? "Узнать пароль" : "Get Password";
+            document.getElementById('off-title').innerText = r ? "Сайт на техобслуживании" : "Site is under maintenance";
+        }
         init();
     </script>
 </body>
