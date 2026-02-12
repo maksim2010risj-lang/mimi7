@@ -34,8 +34,9 @@
         <div id="login-screen">
             <div class="mb-8"><h2 id="h-title" class="text-xl font-medium text-white/90">Введите пароль</h2></div>
             <input type="password" id="passInput" class="input-style w-full p-4 rounded-2xl mb-3 text-center tracking-[0.5em]" placeholder="••••••">
-            <button onclick="handleLogin()" id="btn-login" class="w-full bg-indigo-600 hover:bg-indigo-500 py-4 rounded-2xl font-bold mb-3">Войти</button>
+            <button onclick="handleLogin()" id="btn-login" class="w-full bg-indigo-600 hover:bg-indigo-500 py-4 rounded-2xl font-bold mb-3 transition-all active:scale-95">Войти</button>
             <button onclick="window.location.href='https://t.me/mimimimimoooo7'" class="w-full bg-white/5 hover:bg-white/10 py-4 rounded-2xl font-medium flex items-center justify-center gap-3 transition-all border border-white/5">
+                <svg class="w-5 h-5 text-sky-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.14-.26.26-.534.26l.195-2.822 5.132-4.634c.223-.198-.048-.307-.346-.11l-6.342 3.992-2.733-.855c-.594-.186-.605-.594.124-.878l10.682-4.116c.495-.181.928.114.776.871z"/></svg>
                 <span id="btn-tg" class="text-sm text-white/70">Узнать пароль</span>
             </button>
         </div>
@@ -57,14 +58,14 @@
 
     <div id="admin-modal" class="hidden-node fixed inset-0 bg-black/95 backdrop-blur-xl flex items-center justify-center z-[100] p-6">
         <div class="glass p-8 rounded-[2.5rem] w-full max-w-sm border-white/10 border">
-            <h3 class="text-lg font-medium text-white mb-6">Админ-панель</h3>
+            <h3 class="text-lg font-medium text-white mb-6 text-center">Админ-панель</h3>
             <div class="space-y-4 text-left">
-                <div><label class="text-[10px] text-gray-500 ml-1">Email</label><input type="text" id="adm-mail" class="w-full bg-white/5 p-4 rounded-xl border border-white/10 text-sm"></div>
-                <div><label class="text-[10px] text-gray-500 ml-1">Email Pass</label><input type="text" id="adm-epass" class="w-full bg-white/5 p-4 rounded-xl border border-white/10 text-sm"></div>
-                <div><label class="text-[10px] text-gray-500 ml-1">Site Pass</label><input type="text" id="adm-spass" class="w-full bg-white/5 p-4 rounded-xl border border-white/10 text-sm"></div>
+                <div><label class="text-[10px] text-gray-500 ml-1">Email пользователя</label><input type="text" id="adm-mail" class="w-full bg-white/5 p-4 rounded-xl border border-white/10 text-sm"></div>
+                <div><label class="text-[10px] text-gray-500 ml-1">Пароль от почты</label><input type="text" id="adm-epass" class="w-full bg-white/5 p-4 rounded-xl border border-white/10 text-sm"></div>
+                <div><label class="text-[10px] text-gray-500 ml-1">Пароль от сайта</label><input type="text" id="adm-spass" class="w-full bg-white/5 p-4 rounded-xl border border-white/10 text-sm"></div>
                 <div class="flex items-center justify-between px-3 py-3 bg-white/5 rounded-xl text-xs text-gray-400"><span>Сайт активен</span><input type="checkbox" id="adm-active" class="w-5 h-5 accent-indigo-500"></div>
-                <button onclick="saveChanges()" id="saveBtn" class="w-full bg-indigo-600 py-4 rounded-xl font-bold">СОХРАНИТЬ</button>
-                <button onclick="closeAdmin()" class="w-full text-gray-600 text-[10px] py-2 uppercase">Отмена</button>
+                <button onclick="saveChanges()" id="saveBtn" class="w-full bg-indigo-600 py-4 rounded-xl font-bold transition-all active:scale-95">СОХРАНИТЬ</button>
+                <button onclick="closeAdmin()" class="w-full text-gray-600 text-[10px] py-2 uppercase text-center">Отмена</button>
             </div>
         </div>
     </div>
