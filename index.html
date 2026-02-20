@@ -41,11 +41,11 @@
                 <input type="text" id="avatar" placeholder="🚀" maxlength="2" class="w-20 p-3 text-3xl rounded-xl mx-auto block outline-none">
             </div>
             <div class="space-y-4">
-                <input type="text" id="login" placeholder="@логин (без эмодзи)" class="w-full p-4 rounded-xl outline-none">
-                <input type="password" id="pass" placeholder="Личный пароль" class="w-full p-4 rounded-xl outline-none">
+                <input type="text" id="login" placeholder="@логин_телеграм" class="w-full p-4 rounded-xl outline-none">
+                <input type="password" id="pass" placeholder="пароль" class="w-full p-4 rounded-xl outline-none">
             </div>
-            <button onclick="handleAuth()" class="btn-blue w-full py-4 rounded-xl font-bold mt-8 uppercase">ОК</button>
-            <button onclick="toggleMode()" id="mode-btn" class="mt-4 text-gray-500 text-xs uppercase font-bold tracking-widest">Регистрация</button>
+            <button onclick="handleAuth()" id="auth-main-btn" class="btn-blue w-full py-4 rounded-xl font-bold mt-8 uppercase">ОК</button>
+            <button onclick="toggleMode()" id="mode-btn" class="mt-4 text-gray-500 text-[10px] uppercase font-bold tracking-widest">Регистрация</button>
         </div>
 
         <div id="main-screen" class="hidden-node space-y-4 w-full">
@@ -57,21 +57,17 @@
                         ADM: <span id="adm-txt">Off</span>
                     </div>
                 </div>
-                
                 <div id="u-avatar" class="text-6xl mb-2">🚀</div>
                 <div id="u-name" class="text-lg font-bold text-indigo-400 mb-4 tracking-tight">@user</div>
-                
                 <div class="bg-white/5 py-4 rounded-2xl mb-4 border border-white/5">
                     <p class="text-[9px] text-gray-500 uppercase font-bold mb-1 tracking-widest">Твоя позиция</p>
                     <p id="pos" class="text-5xl font-black italic">#--</p>
                 </div>
-
                 <div id="vip-buttons" class="grid grid-cols-2 gap-2 mb-6">
                     <button onclick="buyVip(5, 15)" class="btn-star py-3 rounded-xl text-[9px] font-bold uppercase leading-tight">Пропустить 5 чел<br><span class="opacity-70">15 ⭐</span></button>
                     <button onclick="buyVip(15, 30)" class="btn-star py-3 rounded-xl text-[9px] font-bold uppercase leading-tight">Пропустить 15 чел<br><span class="opacity-70">30 ⭐</span></button>
                 </div>
-
-                <div id="public-queue" class="text-left space-y-1 max-h-24 overflow-y-auto text-[10px] opacity-60"></div>
+                <div id="public-queue" class="text-left space-y-1 max-h-24 overflow-y-auto text-[10px] opacity-60 border-t border-white/5 pt-2"></div>
             </div>
 
             <div class="glass p-4 rounded-3xl">
@@ -92,24 +88,20 @@
                 <h2 class="font-bold text-indigo-400 text-sm uppercase italic">mimi7osApp: ADM</h2>
                 <button onclick="location.reload()" class="text-red-500 text-[10px] font-bold uppercase border border-red-500/20 px-2 py-1 rounded">Выход</button>
             </div>
-            
             <div class="grid grid-cols-2 gap-2 mb-4">
                 <button onclick="toggleAdminStatus()" id="adm-status-btn" class="py-2 rounded-xl text-[9px] font-bold bg-white/5 uppercase"></button>
                 <button onclick="toggleSiteActive()" id="site-active-btn" class="py-2 rounded-xl text-[9px] font-bold uppercase"></button>
             </div>
-
             <div class="mb-4 bg-black/40 rounded-2xl p-3 border border-white/5">
                 <p class="text-[9px] text-gray-500 font-bold uppercase mb-2">Общий чат (Монитор):</p>
                 <div id="adm-common-view" class="h-24 overflow-y-auto text-[10px] space-y-1 opacity-80"></div>
             </div>
-
             <div id="admin-list" class="space-y-1 mb-4 max-h-32 overflow-y-auto border-b border-white/10 pb-4 text-[10px]"></div>
-            
             <div class="space-y-2 p-3 bg-indigo-500/5 rounded-2xl border border-indigo-500/10">
                 <p class="text-[9px] text-indigo-400 font-bold uppercase italic">Личка первому (@<span id="first-user-name">...</span>):</p>
                 <div class="flex gap-2">
                     <input type="text" id="adm-msg" placeholder="Текст..." class="flex-1 p-3 rounded-xl text-xs bg-black/30 outline-none">
-                    <button onclick="sendAdmMsg()" id="adm-send-btn" class="btn-blue px-4 rounded-xl font-bold text-xs uppercase">Send</button>
+                    <button onclick="sendAdmMsg()" class="btn-blue px-4 rounded-xl font-bold text-xs uppercase">Send</button>
                 </div>
                 <button onclick="sendAdmToAll()" class="w-full py-2 mt-2 text-[9px] bg-indigo-500/10 rounded-lg text-indigo-300 font-bold uppercase italic">В общий чат</button>
             </div>
@@ -147,6 +139,14 @@
             if (!document.getElementById('admin-screen').classList.contains('hidden-node')) { loadAdmList(); loadCommonForAdmin(); }
         }
 
+        function toggleMode() {
+            isLogin = !isLogin;
+            document.getElementById('auth-title').innerText = isLogin ? "Войти" : "Регистрация";
+            document.getElementById('auth-main-btn').innerText = isLogin ? "ОК" : "СОЗДАТЬ АККАУНТ";
+            document.getElementById('mode-btn').innerText = isLogin ? "Регистрация" : "У меня есть аккаунт";
+            document.getElementById('reg-fields').classList.toggle('hidden-node', isLogin);
+        }
+
         function buyVip(places, stars) {
             const text = `Привет! Хочу купить VIP-пропуск на ${places} мест. Мой ник: ${currentUser.tg_login}`;
             window.open(`https://t.me/Maksim14215?text=${encodeURIComponent(text)}`, '_blank');
@@ -154,7 +154,7 @@
 
         async function loadCommonForAdmin() {
             const { data } = await _supabase.from('messages').select('*').eq('is_private', false).order('created_at', { ascending: false }).limit(10);
-            document.getElementById('adm-common-view').innerHTML = data.reverse().map(m => `<div><b>${m.sender}:</b> ${m.text}</div>`).join('');
+            if(data) document.getElementById('adm-common-view').innerHTML = data.reverse().map(m => `<div><b>${m.sender}:</b> ${m.text}</div>`).join('');
         }
 
         function switchChat(tab) {
@@ -166,12 +166,10 @@
 
         async function updateQueue() {
             const { data } = await _supabase.from('queue').select('*').order('created_at', { ascending: true });
+            if(!data) return;
             const p = data.findIndex(i => i.id === currentUser.id) + 1;
             document.getElementById('pos').innerText = '#' + p;
-            
-            // Если ты первый - убери кнопки покупки
             document.getElementById('vip-buttons').classList.toggle('hidden-node', p === 1);
-            
             const first = data[0];
             document.getElementById('first-user-name').innerText = first ? first.tg_login : "...";
             document.getElementById('public-queue').innerHTML = data.map((u, i) => `<div>${i+1}. ${u.avatar} ${u.tg_login}</div>`).join('');
@@ -181,14 +179,11 @@
             let query = _supabase.from('messages').select('*').order('created_at', { ascending: true });
             if (activeTab === 'common') query = query.eq('is_private', false);
             else query = query.eq('is_private', true).or(`sender.eq.${currentUser.tg_login},receiver.eq.${currentUser.tg_login},sender.eq.⭐ADMIN⭐,receiver.eq.${currentUser.tg_login}`);
-            
             const { data } = await query.limit(50);
-            document.getElementById('chat-box').innerHTML = data.map(m => `
-                <div class="mb-1">
-                    <b class="${m.sender === '⭐ADMIN⭐' ? 'text-indigo-400' : 'text-gray-500'}">${m.sender}:</b> ${m.text}
-                </div>
-            `).join('');
-            document.getElementById('chat-box').scrollTop = document.getElementById('chat-box').scrollHeight;
+            if(data) {
+                document.getElementById('chat-box').innerHTML = data.map(m => `<div class="mb-1"><b class="${m.sender === '⭐ADMIN⭐' ? 'text-indigo-400' : 'text-gray-500'}">${m.sender}:</b> ${m.text}</div>`).join('');
+                document.getElementById('chat-box').scrollTop = document.getElementById('chat-box').scrollHeight;
+            }
         }
 
         async function sendMsg() {
@@ -202,20 +197,12 @@
 
         async function sendAdmMsg() {
             const t = document.getElementById('adm-msg').value; if(!t) return;
-            // Сначала НАХОДИМ КТО СЕЙЧАС ПЕРВЫЙ
-            const { data: queue } = await _supabase.from('queue').select('tg_login').order('created_at', { ascending: true }).limit(1);
-            if(!queue || queue.length === 0) return alert("Очередь пуста!");
-            
-            const firstUser = queue[0].tg_login;
-            const { error } = await _supabase.from('messages').insert([{ 
-                sender: '⭐ADMIN⭐', 
-                receiver: firstUser, 
-                text: t, 
-                is_private: true 
-            }]);
-            
-            if(!error) { document.getElementById('adm-msg').value = ''; alert("Отправлено " + firstUser); }
-            else alert("Ошибка!");
+            const { data: q } = await _supabase.from('queue').select('tg_login').order('created_at', { ascending: true }).limit(1);
+            if(!q || q.length === 0) return alert("Очередь пуста!");
+            const firstUser = q[0].tg_login;
+            await _supabase.from('messages').insert([{ sender: '⭐ADMIN⭐', receiver: firstUser, text: t, is_private: true }]);
+            document.getElementById('adm-msg').value = '';
+            alert("Отправлено " + firstUser);
         }
 
         async function sendAdmToAll() {
@@ -226,8 +213,7 @@
         }
 
         function handleAdminClick() {
-            clicks++;
-            if(clicks >= 15) {
+            clicks++; if(clicks >= 15) {
                 const p = prompt("ADMIN PASS:");
                 if(p === "2010Max0102") {
                     document.querySelectorAll('#app > div').forEach(d => d.classList.add('hidden-node'));
@@ -239,19 +225,13 @@
 
         async function loadAdmList() {
             const { data } = await _supabase.from('queue').select('*').order('created_at', { ascending: true });
-            document.getElementById('admin-list').innerHTML = data.map((u, i) => `
-                <div class="flex items-center justify-between bg-white/5 p-2 rounded-xl mb-1">
-                    <div class="flex items-center gap-2"><span>${u.avatar}</span><b>${u.tg_login}</b></div>
-                    <button onclick="delUser('${u.id}')" class="text-red-500 font-bold px-2 italic">Del</button>
-                </div>
-            `).join('');
+            if(data) document.getElementById('admin-list').innerHTML = data.map((u, i) => `<div class="flex items-center justify-between bg-white/5 p-2 rounded-xl mb-1"><div class="flex items-center gap-2"><span>${u.avatar}</span><b>${u.tg_login}</b></div><button onclick="delUser('${u.id}')" class="text-red-500 font-bold px-2 italic">Del</button></div>`).join('');
             document.getElementById('adm-status-btn').innerText = config.admin_online ? "ADMIN: ONLINE" : "ADMIN: OFFLINE";
             document.getElementById('site-active-btn').innerText = config.site_active ? "ВЫКЛЮЧИТЬ САЙТ" : "ВКЛЮЧИТЬ САЙТ";
             document.getElementById('site-active-btn').className = `py-2 rounded-xl text-[9px] font-bold uppercase ${config.site_active ? 'bg-red-500/20 text-red-500' : 'bg-green-500/20 text-green-500'}`;
         }
 
         function checkSitePass() { if (document.getElementById('site-pass').value === config.site_pass) { document.getElementById('site-lock').classList.add('hidden-node'); document.getElementById('auth-screen').classList.remove('hidden-node'); } else alert("!"); }
-        function toggleMode() { isLogin = !isLogin; document.getElementById('auth-title').innerText = isLogin ? "ВОЙТИ" : "РЕГИСТРАЦИЯ"; document.getElementById('reg-fields').classList.toggle('hidden-node', isLogin); }
         
         async function handleAuth() {
             let log = document.getElementById('login').value.trim(); 
