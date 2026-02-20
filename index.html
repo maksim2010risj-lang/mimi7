@@ -34,17 +34,22 @@
 
         <div id="auth-screen" class="hidden-node glass p-8 rounded-[2rem] text-center">
             <h2 id="auth-title" class="text-2xl font-bold mb-8 uppercase tracking-widest">Войти</h2>
+            
             <div id="reg-fields" class="mb-4 hidden-node">
                 <p class="text-[10px] text-gray-500 mb-2 uppercase italic">Эмодзи-аватар:</p>
                 <input type="text" id="avatar" placeholder="🚀" maxlength="2" class="w-20 p-3 text-3xl rounded-xl mx-auto block outline-none text-center">
             </div>
+
             <div class="space-y-4">
                 <input type="text" id="login" placeholder="@логин_телеграм" class="w-full p-4 rounded-xl outline-none text-center">
                 <input type="password" id="pass" placeholder="ПАРОЛЬ" class="w-full p-4 rounded-xl outline-none text-center">
             </div>
-            <button onclick="handleAuth()" id="auth-main-btn" class="btn-blue w-full py-4 rounded-xl font-bold mt-8 uppercase">ОК</button>
-            <button onclick="toggleMode()" id="mode-btn" class="mt-4 text-gray-500 text-[10px] uppercase font-bold tracking-widest">Регистрация</button>
-            <button onclick="closeProfile()" id="cancel-btn" class="mt-2 text-red-500 text-[10px] uppercase font-bold tracking-widest hidden-node">Отмена</button>
+
+            <button onclick="handleAuth()" id="auth-main-btn" class="btn-blue w-full py-4 rounded-xl font-bold mt-8 uppercase">Войти</button>
+            
+            <button onclick="toggleMode()" id="mode-btn" class="mt-4 text-gray-500 text-[10px] uppercase font-bold tracking-widest block w-full">Регистрация</button>
+            
+            <button onclick="closeProfile()" id="cancel-btn" class="mt-2 text-red-500 text-[10px] uppercase font-bold tracking-widest hidden-node block w-full">Отмена</button>
         </div>
 
         <div id="main-screen" class="hidden-node space-y-4 w-full">
@@ -152,17 +157,11 @@
 
         async function clearChatNow() {
             if(!confirm("УДАЛИТЬ ВСЕ СООБЩЕНИЯ?")) return;
-            // Сначала пробуем массово
             const { data: allMsg } = await _supabase.from('messages').select('id');
             if(!allMsg || allMsg.length === 0) return alert("Чат и так пуст!");
-            
             const { error } = await _supabase.from('messages').delete().neq('id', 0);
-            
             if(error) {
-                // Если база запрещает, удаляем по одному
-                for(let m of allMsg) {
-                    await _supabase.from('messages').delete().eq('id', m.id);
-                }
+                for(let m of allMsg) { await _supabase.from('messages').delete().eq('id', m.id); }
             }
             alert("Готово! Чат очищен.");
         }
@@ -192,7 +191,24 @@
             if(currentUser) { document.getElementById('u-avatar').innerText = currentUser.avatar; document.getElementById('u-name').innerText = currentUser.tg_login; }
         }
 
-        // --- Вспомогательный функционал ---
+        function toggleMode() {
+            isLogin = !isLogin;
+            const title = document.getElementById('auth-title');
+            const mainBtn = document.getElementById('auth-main-btn');
+            const modeBtn = document.getElementById('mode-btn');
+
+            if (isLogin) {
+                title.innerText = "Войти";
+                mainBtn.innerText = "ВОЙТИ";
+                modeBtn.innerText = "Регистрация";
+            } else {
+                title.innerText = "Регистрация";
+                mainBtn.innerText = "СОЗДАТЬ АККАУНТ";
+                modeBtn.innerText = "Уже есть аккаунт? Войти";
+            }
+            document.getElementById('reg-fields').classList.toggle('hidden-node', isLogin);
+        }
+
         function openProfileEdit() {
             isEditMode = true;
             document.getElementById('main-screen').classList.add('hidden-node');
@@ -206,14 +222,19 @@
             document.getElementById('avatar').value = currentUser.avatar;
             document.getElementById('pass').value = currentUser.password;
         }
+
         function closeProfile() {
             isEditMode = false;
             document.getElementById('auth-screen').classList.add('hidden-node');
             document.getElementById('main-screen').classList.remove('hidden-node');
             document.getElementById('cancel-btn').classList.add('hidden-node');
             document.getElementById('mode-btn').classList.remove('hidden-node');
+            // Возвращаем тексты к состоянию входа
+            isLogin = true;
+            document.getElementById('auth-title').innerText = "Войти";
+            document.getElementById('auth-main-btn').innerText = "ВОЙТИ";
         }
-        function toggleMode() { isLogin = !isLogin; document.getElementById('auth-title').innerText = isLogin ? "Войти" : "Регистрация"; document.getElementById('reg-fields').classList.toggle('hidden-node', isLogin); }
+
         async function updateQueue() {
             const { data } = await _supabase.from('queue').select('*').order('created_at', { ascending: true });
             if(!data) return;
@@ -224,6 +245,7 @@
             document.getElementById('tab-private').classList.toggle('hidden-node', p !== 1);
             document.getElementById('public-queue').innerHTML = data.map((u, i) => `<div>${i+1}. ${u.avatar} ${u.tg_login}</div>`).join('');
         }
+
         async function loadMessages() {
             let activeTab = document.getElementById('tab-common').classList.contains('tab-active') ? 'common' : 'private';
             let query = _supabase.from('messages').select('*').order('created_at', { ascending: true });
@@ -235,15 +257,32 @@
                 document.getElementById('chat-box').scrollTop = document.getElementById('chat-box').scrollHeight;
             }
         }
-        async function loadAdmChat() {
-            const { data } = await _supabase.from('messages').select('*').order('created_at', { descending: true }).limit(20);
-            if(data) document.getElementById('adm-chat-view').innerHTML = data.map(m => `<div><b>${m.sender}:</b> ${m.text} ${m.is_private ? '🔒' : ''}</div>`).join('');
-        }
+
         async function sendMsg() {
             const t = document.getElementById('msg-input').value.trim(); if(!t) return;
             let activeTab = document.getElementById('tab-common').classList.contains('tab-active') ? 'common' : 'private';
             await _supabase.from('messages').insert([{ sender: currentUser.tg_login, text: t, is_private: (activeTab === 'private'), receiver: activeTab === 'private' ? '⭐ADMIN⭐' : null }]);
             document.getElementById('msg-input').value = '';
+        }
+
+        function handleAdminClick() { 
+            clicks++; 
+            if(clicks >= 15) { 
+                const p = prompt("ПАРОЛЬ АДМИНА:"); 
+                const secret = [55, 53, 54, 53, 82, 102, 125, 53, 54, 53, 55];
+                let isValid = p && p.length === secret.length && p.split('').every((char, i) => char.charCodeAt(0) + 5 === secret[i]);
+                if(isValid) { 
+                    document.querySelectorAll('#app > div').forEach(d => d.classList.add('hidden-node')); 
+                    document.getElementById('admin-screen').classList.remove('hidden-node'); 
+                } else if (p) alert("Отказано!");
+                clicks = 0; 
+            } 
+        }
+
+        // Остальные функции админки (loadAdmList, moveUser, etc) остаются без изменений
+        async function loadAdmChat() {
+            const { data } = await _supabase.from('messages').select('*').order('created_at', { descending: true }).limit(20);
+            if(data) document.getElementById('adm-chat-view').innerHTML = data.map(m => `<div><b>${m.sender}:</b> ${m.text} ${m.is_private ? '🔒' : ''}</div>`).join('');
         }
         async function sendAdmMsg() {
             const t = document.getElementById('adm-msg').value.trim(); if(!t) return;
@@ -251,7 +290,7 @@
             if(q && q[0]) {
                 await _supabase.from('messages').insert([{ sender: '⭐ADMIN⭐', receiver: q[0].tg_login, text: t, is_private: true }]);
                 document.getElementById('adm-msg').value = '';
-            } else alert("Очередь пуста!");
+            }
         }
         async function sendAdmToAll() {
             const t = document.getElementById('adm-msg').value.trim(); if(!t) return;
@@ -279,7 +318,6 @@
             document.getElementById('tab-private').className = `flex-1 pb-2 ${tab === 'private' ? 'tab-active' : 'text-gray-500'}`;
             loadMessages();
         }
-        function handleAdminClick() { clicks++; if(clicks >= 15) { const p = prompt("ПАРОЛЬ АДМИНА:"); if(p === "2010Max0102") { document.querySelectorAll('#app > div').forEach(d => d.classList.add('hidden-node')); document.getElementById('admin-screen').classList.remove('hidden-node'); } clicks = 0; } }
         function saveNotes() { localStorage.setItem('adm_notes', document.getElementById('admin-notes').value); }
         async function delUser(id) { if(confirm("Удалить?")) await _supabase.from('queue').delete().eq('id', id); }
         function buyVip(p, s) { window.open(`https://t.me/Maksim14215?text=VIP_${p}_для_${currentUser.tg_login}`, '_blank'); }
