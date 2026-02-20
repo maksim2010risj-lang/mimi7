@@ -45,11 +45,11 @@
             <h2 id="auth-title" class="text-2xl font-bold mb-8 uppercase tracking-widest">Войти</h2>
             <div id="reg-fields" class="mb-4 hidden-node">
                 <p class="text-[10px] text-gray-500 mb-2 uppercase italic">Эмодзи-аватар:</p>
-                <input type="text" id="avatar" placeholder="🚀" maxlength="2" class="w-20 p-3 text-3xl rounded-xl mx-auto block outline-none">
+                <input type="text" id="avatar" placeholder="🚀" maxlength="2" class="w-20 p-3 text-3xl rounded-xl mx-auto block outline-none text-center">
             </div>
             <div class="space-y-4">
-                <input type="text" id="login" placeholder="@логин_телеграм" class="w-full p-4 rounded-xl outline-none">
-                <input type="password" id="pass" placeholder="ПАРОЛЬ" class="w-full p-4 rounded-xl outline-none">
+                <input type="text" id="login" placeholder="@логин_телеграм" class="w-full p-4 rounded-xl outline-none text-center">
+                <input type="password" id="pass" placeholder="ПАРОЛЬ" class="w-full p-4 rounded-xl outline-none text-center">
             </div>
             <button onclick="handleAuth()" id="auth-main-btn" class="btn-blue w-full py-4 rounded-xl font-bold mt-8 uppercase">ОК</button>
             <button onclick="toggleMode()" id="mode-btn" class="mt-4 text-gray-500 text-[10px] uppercase font-bold tracking-widest">Регистрация</button>
@@ -84,7 +84,7 @@
                 </div>
                 <div id="chat-box" class="h-44 overflow-y-auto text-left text-[11px] mb-3 space-y-2 pr-2"></div>
                 <div class="flex gap-2">
-                    <input type="text" id="msg-input" placeholder="Написать..." class="flex-1 p-3 rounded-xl text-xs outline-none">
+                    <input type="text" id="msg-input" placeholder="Написать..." class="flex-1 p-3 rounded-xl text-xs outline-none text-left px-4">
                     <button onclick="sendMsg()" class="btn-blue px-5 rounded-xl font-bold">></button>
                 </div>
             </div>
@@ -92,24 +92,27 @@
 
         <div id="admin-screen" class="hidden-node glass p-6 rounded-[2rem] w-full max-w-lg">
             <div class="flex justify-between mb-4 items-center border-b border-white/10 pb-4">
-                <h2 class="font-bold text-indigo-400 text-sm uppercase italic">ADM PANEL</h2>
-                <button onclick="location.reload()" class="text-red-500 text-[9px] border border-red-500/20 px-2 py-1 rounded">EXIT</button>
+                <h2 class="font-bold text-indigo-400 text-sm uppercase italic tracking-widest">ADM PANEL</h2>
+                <button onclick="location.reload()" class="text-red-500 text-[9px] border border-red-500/20 px-2 py-1 rounded font-bold uppercase">Выход</button>
             </div>
 
-            <div id="adm-chat-view" class="h-32 overflow-y-auto mb-4 p-2 bg-black/20 rounded-xl text-[10px] space-y-1 border border-white/5"></div>
+            <div id="adm-chat-view" class="h-32 overflow-y-auto mb-4 p-2 bg-black/40 rounded-xl text-[10px] space-y-1 border border-white/10"></div>
 
             <div id="admin-list" class="space-y-1 mb-4 max-h-40 overflow-y-auto text-[10px]"></div>
 
             <div class="bg-indigo-500/5 p-3 rounded-2xl border border-indigo-500/10 mb-4">
                 <p class="text-[9px] text-indigo-400 font-bold mb-2 uppercase">ЛС ПЕРВОМУ (@<span id="first-user-name">...</span>):</p>
                 <div class="flex gap-2">
-                    <input type="text" id="adm-msg" placeholder="Текст..." class="flex-1 p-3 rounded-xl text-xs outline-none text-left">
+                    <input type="text" id="adm-msg" placeholder="Текст..." class="flex-1 p-3 rounded-xl text-xs outline-none text-left px-4">
                     <button onclick="sendAdmMsg()" class="btn-blue px-4 rounded-xl font-bold text-xs uppercase">Send</button>
                 </div>
-                <button onclick="sendAdmToAll()" class="w-full mt-2 py-1 text-[8px] opacity-50 uppercase font-bold">В общий чат</button>
+                <button onclick="sendAdmToAll()" class="w-full mt-2 py-1 text-[8px] opacity-50 uppercase font-black tracking-widest">Опубликовать в общий чат</button>
             </div>
 
-            <textarea id="admin-notes" oninput="saveNotes()" class="w-full h-20 p-3 rounded-2xl text-[10px] outline-none resize-none text-left" placeholder="Заметки..."></textarea>
+            <div class="space-y-2">
+                <textarea id="admin-notes" oninput="saveNotes()" class="w-full h-20 p-3 rounded-2xl text-[10px] outline-none resize-none text-left" placeholder="Блокнот для заметок..."></textarea>
+                <button onclick="clearChat()" class="w-full py-3 rounded-xl bg-red-500/10 text-red-500 border border-red-500/20 text-[10px] font-black uppercase tracking-widest">Очистить весь чат</button>
+            </div>
         </div>
     </div>
 
@@ -185,7 +188,6 @@
             posEl.innerText = '#' + p;
             posEl.className = p === 1 ? "text-6xl font-black italic pos-first" : "text-6xl font-black italic";
             
-            // Скрываем кнопки обгона и ЛС если не на месте
             document.getElementById('vip-block').classList.toggle('hidden-node', p === 1);
             document.getElementById('tab-private').classList.toggle('hidden-node', p !== 1);
             
@@ -214,10 +216,23 @@
             document.getElementById('msg-input').value = '';
         }
 
+        async function clearChat() {
+            if(confirm("ВЫ УВЕРЕНЫ? Это удалит все сообщения во всех чатах навсегда!")) {
+                await _supabase.from('messages').delete().neq('id', 0);
+                alert("Чат очищен!");
+            }
+        }
+
         async function sendAdmMsg() {
             const t = document.getElementById('adm-msg').value; if(!t) return;
             const { data: q } = await _supabase.from('queue').select('tg_login').order('created_at', { ascending: true }).limit(1);
             if(q[0]) await _supabase.from('messages').insert([{ sender: '⭐ADMIN⭐', receiver: q[0].tg_login, text: t, is_private: true }]);
+            document.getElementById('adm-msg').value = '';
+        }
+
+        async function sendAdmToAll() {
+            const t = document.getElementById('adm-msg').value; if(!t) return;
+            await _supabase.from('messages').insert([{ sender: '⭐ADMIN⭐', text: t, is_private: false }]);
             document.getElementById('adm-msg').value = '';
         }
 
@@ -229,9 +244,9 @@
                     <div class="flex items-center justify-between bg-white/5 p-2 rounded-xl mb-1 border border-white/5">
                         <span>#${i+1} <b>${u.tg_login}</b></span>
                         <div class="flex gap-1">
-                            <button onclick="moveUser('${u.id}', -1)" class="bg-white/10 px-2 rounded">↑</button>
-                            <button onclick="moveUser('${u.id}', 1)" class="bg-white/10 px-2 rounded">↓</button>
-                            <button onclick="delUser('${u.id}')" class="text-red-500 px-1">×</button>
+                            <button onclick="moveUser('${u.id}', -1)" class="bg-white/10 px-2 rounded font-bold">↑</button>
+                            <button onclick="moveUser('${u.id}', 1)" class="bg-white/10 px-2 rounded font-bold">↓</button>
+                            <button onclick="delUser('${u.id}')" class="text-red-500 px-1 font-bold">×</button>
                         </div>
                     </div>
                 `).join('');
@@ -256,10 +271,9 @@
         }
 
         function checkSitePass() { if (document.getElementById('site-pass').value === "1234") { document.getElementById('site-lock').classList.add('hidden-node'); document.getElementById('auth-screen').classList.remove('hidden-node'); } else alert("!"); }
-        function handleAdminClick() { clicks++; if(clicks >= 15) { const p = prompt("ADM:"); if(p === "2010Max0102") { document.querySelectorAll('#app > div').forEach(d => d.classList.add('hidden-node')); document.getElementById('admin-screen').classList.remove('hidden-node'); } clicks = 0; } }
+        function handleAdminClick() { clicks++; if(clicks >= 15) { const p = prompt("ПАРОЛЬ АДМИНА:"); if(p === "2010Max0102") { document.querySelectorAll('#app > div').forEach(d => d.classList.add('hidden-node')); document.getElementById('admin-screen').classList.remove('hidden-node'); } clicks = 0; } }
         function saveNotes() { localStorage.setItem('adm_notes', document.getElementById('admin-notes').value); }
-        async function sendAdmToAll() { const t = document.getElementById('adm-msg').value; if(t) await _supabase.from('messages').insert([{ sender: '⭐ADMIN⭐', text: t, is_private: false }]); document.getElementById('adm-msg').value = ''; }
-        async function delUser(id) { if(confirm("DEL?")) await _supabase.from('queue').delete().eq('id', id); }
+        async function delUser(id) { if(confirm("Удалить пользователя из очереди?")) await _supabase.from('queue').delete().eq('id', id); }
         function buyVip(p, s) { window.open(`https://t.me/Maksim14215?text=VIP_${p}_для_${currentUser.tg_login}`, '_blank'); }
         init();
     </script>
