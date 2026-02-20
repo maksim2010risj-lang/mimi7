@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Queue Pro</title>
+    <title>Queue Pro Max</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -12,29 +12,28 @@
         .hidden-node { display: none !important; }
         input { background: rgba(255,255,255,0.05) !important; border: 1px solid rgba(255,255,255,0.1) !important; color: white; text-align: center; }
         .btn-blue { background: linear-gradient(135deg, #6366f1, #4338ca); }
-        .btn-red { background: #ef4444; }
         .admin-btn { position: fixed; top: 10px; left: 10px; width: 40px; height: 40px; z-index: 999; opacity: 0.1; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .tab-active { border-bottom: 2px solid #6366f1; color: white; }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
 
-    <div id="admin-trigger" onclick="handleAdminClick()" class="admin-btn">Q</div>
+    <div onclick="handleAdminClick()" class="admin-btn">Q</div>
 
     <div id="maintenance-screen" class="hidden-node text-center glass p-10 rounded-[2rem]">
         <h1 class="text-4xl font-black mb-4 text-red-500">STOP</h1>
-        <p class="text-gray-400 uppercase tracking-widest">Идут технические работы</p>
+        <p class="text-gray-400 uppercase tracking-widest">Технические работы</p>
     </div>
 
     <div id="app" class="w-full max-w-md">
         <div id="site-lock" class="glass p-10 rounded-[2rem] text-center">
-            <h2 class="text-xl font-bold mb-6 uppercase tracking-widest">Введите пароль</h2>
+            <h2 class="text-xl font-bold mb-6">Вход в систему</h2>
             <input type="password" id="site-pass" placeholder="••••" class="w-full p-4 rounded-xl mb-4 outline-none">
             <button onclick="checkSitePass()" class="btn-blue w-full py-4 rounded-xl font-bold uppercase mb-4">Войти</button>
-            <button onclick="window.location.href='https://t.me/mimimimimoooo7'" class="text-indigo-400 text-sm">Узнать пароль</button>
         </div>
 
         <div id="auth-screen" class="hidden-node glass p-8 rounded-[2rem] text-center">
-            <h2 id="auth-title" class="text-2xl font-bold mb-8 uppercase">Войти</h2>
+            <h2 id="auth-title" class="text-2xl font-bold mb-8">ВОЙТИ</h2>
             <div id="reg-fields" class="mb-4 hidden-node">
                 <input type="text" id="avatar" placeholder="🚀" maxlength="2" class="w-20 p-3 text-3xl rounded-xl mx-auto block">
             </div>
@@ -42,78 +41,76 @@
                 <input type="text" id="login" placeholder="@логин" class="w-full p-4 rounded-xl outline-none">
                 <input type="password" id="pass" placeholder="Пароль" class="w-full p-4 rounded-xl outline-none">
             </div>
-            <button onclick="handleAuth()" id="auth-btn" class="btn-blue w-full py-4 rounded-xl font-bold mt-8 uppercase">Войти</button>
-            <button onclick="toggleMode()" id="mode-btn" class="mt-4 text-gray-500 text-sm uppercase font-bold">Регистрация</button>
+            <button onclick="handleAuth()" class="btn-blue w-full py-4 rounded-xl font-bold mt-8 uppercase">ОК</button>
+            <button onclick="toggleMode()" id="mode-btn" class="mt-4 text-gray-500 text-sm">Регистрация</button>
         </div>
 
         <div id="main-screen" class="hidden-node space-y-4 w-full">
             <div class="glass p-6 rounded-[2rem] text-center">
-                <div class="flex justify-between items-center mb-4 text-[10px]">
-                    <button onclick="openEdit()" class="uppercase font-bold text-gray-400 border border-white/10 px-3 py-1 rounded-full">Профиль</button>
-                    <div class="flex items-center font-bold">
-                        <div id="adm-dot" class="w-2 h-2 rounded-full mr-2 bg-red-500"></div>
-                        ADMIN: <span id="adm-txt" class="ml-1 uppercase">Off</span>
+                <div class="flex justify-between items-center mb-4">
+                    <button onclick="openEdit()" class="text-[10px] text-gray-400 uppercase font-bold">Профиль</button>
+                    <div id="adm-status-ui" class="flex items-center text-[10px] font-bold">
+                        <div id="adm-dot" class="w-2 h-2 rounded-full mr-1 bg-red-500"></div>
+                        ADMIN: <span id="adm-txt">Off</span>
                     </div>
                 </div>
-                <div id="u-avatar" class="text-6xl mb-2">🚀</div>
+                <div id="u-avatar" class="text-5xl mb-2">🚀</div>
                 <div id="u-name" class="text-lg font-bold text-indigo-400 mb-4">@user</div>
-                <div class="bg-white/5 py-6 rounded-2xl mb-4 text-center">
-                    <p class="text-[10px] text-gray-500 uppercase mb-1">Твое место</p>
-                    <p id="pos" class="text-5xl font-black">#--</p>
+                <div class="bg-white/5 py-4 rounded-2xl mb-4">
+                    <p id="pos" class="text-4xl font-black">#--</p>
                 </div>
-                <div class="text-left mt-6">
-                    <p class="text-[10px] text-gray-500 uppercase font-bold mb-3">Очередь:</p>
-                    <div id="public-queue" class="space-y-2 max-h-32 overflow-y-auto pr-2 text-xs"></div>
-                </div>
+                <div id="public-queue" class="text-left space-y-1 max-h-24 overflow-y-auto text-[10px] opacity-70"></div>
             </div>
+
             <div class="glass p-4 rounded-3xl">
-                <div id="chat" class="h-32 overflow-y-auto text-left text-[11px] mb-3 space-y-2"></div>
+                <div class="flex border-b border-white/10 mb-3 text-[10px] font-bold uppercase tracking-widest">
+                    <button id="tab-common" onclick="switchChat('common')" class="flex-1 pb-2 tab-active">Общий чат</button>
+                    <button id="tab-private" onclick="switchChat('private')" class="flex-1 pb-2 text-gray-500">Чат с Админом</button>
+                </div>
+                <div id="chat-box" class="h-40 overflow-y-auto text-left text-[11px] mb-3 space-y-2"></div>
                 <div class="flex gap-2">
-                    <input type="text" id="msg-input" placeholder="Чат..." class="flex-1 p-3 rounded-xl text-xs">
+                    <input type="text" id="msg-input" placeholder="Написать..." class="flex-1 p-3 rounded-xl text-xs bg-black/20">
                     <button onclick="sendMsg()" class="btn-blue px-4 rounded-xl">></button>
                 </div>
             </div>
         </div>
 
-        <div id="admin-screen" class="hidden-node glass p-6 rounded-[2rem] w-full max-w-lg">
-            <div class="flex justify-between mb-6 items-center border-b border-white/10 pb-4">
-                <h2 class="font-bold text-indigo-400">ADMIN CONTROL</h2>
-                <button onclick="location.reload()" class="text-red-500 text-xs font-bold uppercase">Закрыть</button>
+        <div id="admin-screen" class="hidden-node glass p-6 rounded-[2rem] w-full">
+            <div class="flex justify-between mb-4 items-center">
+                <h2 class="font-bold text-indigo-400">ADMIN</h2>
+                <button onclick="location.reload()" class="text-red-500 text-xs font-bold uppercase">Выход</button>
             </div>
             
-            <div class="grid grid-cols-2 gap-2 mb-6">
-                <button onclick="toggleAdminStatus()" id="adm-status-btn" class="py-3 rounded-xl bg-white/5 text-[9px] font-bold uppercase"></button>
-                <button onclick="toggleSiteActive()" id="site-active-btn" class="py-3 rounded-xl text-[9px] font-bold uppercase"></button>
+            <div class="grid grid-cols-2 gap-2 mb-4">
+                <button onclick="toggleAdminStatus()" id="adm-status-btn" class="py-2 rounded-xl text-[9px] font-bold bg-white/5"></button>
+                <button onclick="toggleSiteActive()" id="site-active-btn" class="py-2 rounded-xl text-[9px] font-bold"></button>
             </div>
 
-            <div class="mb-6 p-4 bg-white/5 rounded-2xl">
-                <p class="text-[9px] text-gray-500 uppercase font-bold mb-2 text-center">Сменить пароль сайта</p>
-                <div class="flex gap-2">
-                    <input type="text" id="new-site-pass" placeholder="Новый пароль" class="flex-1 p-2 rounded-lg text-xs">
-                    <button onclick="updateSitePass()" class="bg-indigo-500 px-4 py-2 rounded-lg text-[10px] font-bold">OK</button>
-                </div>
+            <div class="flex gap-2 mb-4">
+                <input type="text" id="new-site-pass" placeholder="Новый пароль сайта" class="flex-1 p-2 rounded-lg text-xs">
+                <button onclick="updateSitePass()" class="bg-white/10 px-3 rounded-lg text-[9px]">SET</button>
             </div>
 
-            <div id="admin-list" class="space-y-2 mb-4 max-h-40 overflow-y-auto"></div>
+            <div id="admin-list" class="space-y-2 mb-4 max-h-40 overflow-y-auto border-b border-white/10 pb-4"></div>
             
-            <div class="p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-2xl">
-                <p class="text-[9px] text-indigo-400 font-bold uppercase mb-2">Ответ последнему в очереди:</p>
+            <div class="space-y-2">
+                <p class="text-[9px] text-indigo-400 font-bold uppercase">Ответить первому (@<span id="first-user-name">...</span>):</p>
                 <div class="flex gap-2">
-                    <input type="text" id="adm-msg" placeholder="Текст..." class="flex-1 p-3 rounded-xl text-xs bg-black/20">
+                    <input type="text" id="adm-msg" placeholder="Текст сообщения..." class="flex-1 p-3 rounded-xl text-xs bg-black/20">
                     <button onclick="sendAdmMsg()" class="btn-blue px-4 rounded-xl font-bold">SEND</button>
                 </div>
+                <button onclick="sendAdmToAll()" class="w-full py-2 mt-2 text-[9px] bg-white/5 rounded-lg text-gray-400 font-bold">ОТПРАВИТЬ В ОБЩИЙ ЧАТ</button>
             </div>
         </div>
     </div>
 
     <div id="edit-modal" class="hidden-node fixed inset-0 bg-black/95 flex items-center justify-center p-6 z-[1000]">
         <div class="glass p-8 rounded-3xl w-full max-w-sm text-center">
-            <h3 class="font-bold mb-6 uppercase">Профиль</h3>
             <input type="text" id="new-av" class="w-full p-4 rounded-xl text-4xl mb-4">
             <input type="text" id="new-log" class="w-full p-4 rounded-xl mb-6 font-bold">
-            <button onclick="saveEdit()" class="btn-blue w-full py-4 rounded-xl font-bold mb-3">СОХРАНИТЬ</button>
+            <button onclick="saveEdit()" class="btn-blue w-full py-4 rounded-xl font-bold mb-3 uppercase">Сохранить</button>
             <button onclick="deleteAccount()" class="w-full py-3 rounded-xl bg-red-500/10 text-red-500 text-xs font-bold uppercase mb-4">Удалить аккаунт</button>
-            <button onclick="closeEdit()" class="text-gray-500 text-xs">ОТМЕНА</button>
+            <button onclick="closeEdit()" class="text-gray-500 text-xs uppercase">Закрыть</button>
         </div>
     </div>
 
@@ -122,110 +119,98 @@
         const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6cXd5eGN5YnVxaGpzbmpwdW9lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5MDExMTIsImV4cCI6MjA4NjQ3NzExMn0.BX7jXhMzSAef3ln5wy8le6nG45me4KnFRbi66482uYo";
         const _supabase = supabase.createClient(SB_URL, SB_KEY);
 
-        let currentUser = null;
-        let isLogin = true;
+        let currentUser = null, isLogin = true, clicks = 0;
         let config = { site_pass: "1234", admin_online: false, site_active: true };
-        let clicks = 0;
-        let lastUserLogin = "";
+        let activeTab = 'common'; // 'common' или 'private'
+        let firstUser = null;
 
         async function init() {
             const { data } = await _supabase.from('settings').select('*').eq('id', 1).single();
             if (data) config = data;
-            sync();
-            setInterval(sync, 4000);
+            sync(); setInterval(sync, 4000);
         }
 
         async function sync() {
-            const { data } = await _supabase.from('settings').select('*').eq('id', 1).single();
-            if (data) {
-                config = data;
+            const { data: set } = await _supabase.from('settings').select('*').eq('id', 1).single();
+            if (set) {
+                config = set;
                 if (!config.site_active && !document.getElementById('admin-screen').offsetParent) {
                     document.getElementById('app').classList.add('hidden-node');
                     document.getElementById('maintenance-screen').classList.remove('hidden-node');
                 } else {
                     document.getElementById('maintenance-screen').classList.add('hidden-node');
-                    if (currentUser || !document.getElementById('site-lock').classList.contains('hidden-node')) {
-                        document.getElementById('app').classList.remove('hidden-node');
-                    }
+                    document.getElementById('app').classList.remove('hidden-node');
                 }
-                const d = document.getElementById('adm-dot');
-                const t = document.getElementById('adm-txt');
-                if(d && t) {
-                    d.className = `w-2 h-2 rounded-full mr-2 ${config.admin_online ? 'bg-green-500' : 'bg-red-500'}`;
-                    t.innerText = config.admin_online ? 'On' : 'Off';
-                }
+                document.getElementById('adm-dot').className = `w-2 h-2 rounded-full mr-1 ${config.admin_online ? 'bg-green-500' : 'bg-red-500'}`;
+                document.getElementById('adm-txt').innerText = config.admin_online ? 'On' : 'Off';
             }
-            if(currentUser) { updatePos(); updatePublicQueue(); loadMsgs(); }
-            if(!document.getElementById('admin-screen').classList.contains('hidden-node')) loadAdmList();
-        }
-
-        function checkSitePass() {
-            if (document.getElementById('site-pass').value === config.site_pass) {
-                document.getElementById('site-lock').classList.add('hidden-node');
-                document.getElementById('auth-screen').classList.remove('hidden-node');
-            } else alert("Пароль не верен!");
-        }
-
-        function toggleMode() {
-            isLogin = !isLogin;
-            document.getElementById('auth-title').innerText = isLogin ? "ВОЙТИ" : "РЕГИСТРАЦИЯ";
-            document.getElementById('auth-btn').innerText = isLogin ? "Войти" : "Создать";
-            document.getElementById('reg-fields').classList.toggle('hidden-node', isLogin);
-        }
-
-        async function handleAuth() {
-            let log = document.getElementById('login').value.trim();
-            let pas = document.getElementById('pass').value.trim();
-            if(!log || !pas) return alert("Заполни всё!");
-            if(!log.startsWith('@')) log = '@' + log;
-
-            if (isLogin) {
-                const { data } = await _supabase.from('queue').select('*').eq('tg_login', log).eq('password', pas).single();
-                if(!data) return alert("Ошибка!");
-                currentUser = data;
-            } else {
-                const { data, error } = await _supabase.from('queue').insert([{ tg_login: log, password: pas, avatar: document.getElementById('avatar').value || '👤' }]).select();
-                if(error) return alert("Занято!");
-                currentUser = data[0];
+            if (currentUser) {
+                updateQueue();
+                loadMessages();
             }
-            startApp();
+            if (!document.getElementById('admin-screen').classList.contains('hidden-node')) loadAdmList();
         }
 
-        function startApp() {
-            document.getElementById('auth-screen').classList.add('hidden-node');
-            document.getElementById('main-screen').classList.remove('hidden-node');
-            document.getElementById('u-avatar').innerText = currentUser.avatar;
-            document.getElementById('u-name').innerText = currentUser.tg_login;
+        function switchChat(tab) {
+            activeTab = tab;
+            document.getElementById('tab-common').className = `flex-1 pb-2 ${tab === 'common' ? 'tab-active' : 'text-gray-500'}`;
+            document.getElementById('tab-private').className = `flex-1 pb-2 ${tab === 'private' ? 'tab-active' : 'text-gray-500'}`;
+            loadMessages();
         }
 
-        async function updatePos() {
-            const { data } = await _supabase.from('queue').select('id').order('created_at', { ascending: true });
+        async function updateQueue() {
+            const { data } = await _supabase.from('queue').select('*').order('created_at', { ascending: true });
             const p = data.findIndex(i => i.id === currentUser.id) + 1;
             document.getElementById('pos').innerText = '#' + p;
+            firstUser = data[0];
+            document.getElementById('first-user-name').innerText = firstUser ? firstUser.tg_login : "...";
+            document.getElementById('public-queue').innerHTML = data.map((u, i) => `<div>${i+1}. ${u.avatar} ${u.tg_login}</div>`).join('');
         }
 
-        async function updatePublicQueue() {
-            const { data } = await _supabase.from('queue').select('avatar, tg_login').order('created_at', { ascending: true });
-            if (data.length > 0) lastUserLogin = data[data.length - 1].tg_login;
-            document.getElementById('public-queue').innerHTML = data.map((u, i) => `
-                <div class="flex items-center gap-2 p-2 rounded-lg ${u.tg_login === currentUser.tg_login ? 'bg-indigo-500/20' : 'bg-white/5'}">
-                    <span class="text-gray-500 font-bold">${i+1}.</span>
-                    <span>${u.avatar}</span>
-                    <span>${u.tg_login}</span>
+        async function loadMessages() {
+            let query = _supabase.from('messages').select('*').order('created_at', { ascending: true });
+            if (activeTab === 'common') {
+                query = query.eq('is_private', false);
+            } else {
+                query = query.eq('is_private', true).or(`sender.eq.${currentUser.tg_login},receiver.eq.${currentUser.tg_login}`);
+            }
+            const { data } = await query.limit(40);
+            document.getElementById('chat-box').innerHTML = data.map(m => `
+                <div class="mb-1">
+                    <b class="${m.sender.includes('ADMIN') ? 'text-indigo-400' : 'text-gray-500'}">${m.sender}:</b> ${m.text}
                 </div>
             `).join('');
-        }
-
-        async function loadMsgs() {
-            const { data } = await _supabase.from('messages').select('*').order('created_at', { ascending: true }).limit(30);
-            document.getElementById('chat').innerHTML = data.map(m => `<div><b class="${m.sender.includes('ADMIN') ? 'text-indigo-400' : 'text-gray-500'}">${m.sender}:</b> ${m.text}</div>`).join('');
         }
 
         async function sendMsg() {
             const t = document.getElementById('msg-input').value;
             if(!t) return;
-            await _supabase.from('messages').insert([{ sender: currentUser.tg_login, text: t }]);
+            const msg = { sender: currentUser.tg_login, text: t, is_private: (activeTab === 'private') };
+            if (activeTab === 'private') msg.receiver = 'ADMIN';
+            await _supabase.from('messages').insert([msg]);
             document.getElementById('msg-input').value = '';
+            loadMessages();
+        }
+
+        async function sendAdmMsg() {
+            const t = document.getElementById('adm-msg').value;
+            if(!t || !firstUser) return;
+            await _supabase.from('messages').insert([{ 
+                sender: 'ADMIN', 
+                receiver: firstUser.tg_login, 
+                text: t, 
+                is_private: true 
+            }]);
+            document.getElementById('adm-msg').value = '';
+            alert("Отправлено первому!");
+        }
+
+        async function sendAdmToAll() {
+            const t = document.getElementById('adm-msg').value;
+            if(!t) return;
+            await _supabase.from('messages').insert([{ sender: 'ADMIN', text: t, is_private: false }]);
+            document.getElementById('adm-msg').value = '';
+            alert("Отправлено в общий чат!");
         }
 
         function handleAdminClick() {
@@ -243,48 +228,47 @@
         async function loadAdmList() {
             const { data } = await _supabase.from('queue').select('*').order('created_at', { ascending: true });
             document.getElementById('admin-list').innerHTML = data.map((u, i) => `
-                <div class="flex items-center justify-between bg-white/5 p-3 rounded-xl text-[10px]">
+                <div class="flex items-center justify-between bg-white/5 p-2 rounded-xl text-[10px]">
                     <div class="flex items-center gap-2"><span>${u.avatar}</span><b>${u.tg_login}</b></div>
-                    <button onclick="delUser('${u.id}')" class="text-red-500 font-bold uppercase">Del</button>
+                    <button onclick="delUser('${u.id}')" class="text-red-500">DEL</button>
                 </div>
             `).join('');
-            
-            const abtn = document.getElementById('adm-status-btn');
-            abtn.innerText = config.admin_online ? "ADMIN: ONLINE" : "ADMIN: OFFLINE";
-            abtn.className = `py-3 rounded-xl text-[9px] font-bold uppercase ${config.admin_online ? 'bg-green-500/20 text-green-500' : 'bg-white/5 text-gray-400'}`;
-            
-            const sbtn = document.getElementById('site-active-btn');
-            sbtn.innerText = config.site_active ? "ВЫКЛЮЧИТЬ САЙТ" : "ВКЛЮЧИТЬ САЙТ";
-            sbtn.className = `py-3 rounded-xl text-[9px] font-bold uppercase ${config.site_active ? 'bg-red-500/20 text-red-500' : 'bg-green-500/20 text-green-500'}`;
+            document.getElementById('adm-status-btn').innerText = config.admin_online ? "ADMIN: ONLINE" : "ADMIN: OFFLINE";
+            document.getElementById('site-active-btn').innerText = config.site_active ? "ВЫКЛЮЧИТЬ САЙТ" : "ВКЛЮЧИТЬ САЙТ";
+            document.getElementById('site-active-btn').className = `py-2 rounded-xl text-[9px] font-bold ${config.site_active ? 'bg-red-500/20 text-red-500' : 'bg-green-500/20 text-green-500'}`;
         }
 
+        // Остальные функции (авторизация, профиль) такие же как в прошлом коде
+        function checkSitePass() { if (document.getElementById('site-pass').value === config.site_pass) { document.getElementById('site-lock').classList.add('hidden-node'); document.getElementById('auth-screen').classList.remove('hidden-node'); } else alert("!"); }
+        function toggleMode() { isLogin = !isLogin; document.getElementById('auth-title').innerText = isLogin ? "ВОЙТИ" : "РЕГИСТРАЦИЯ"; document.getElementById('reg-fields').classList.toggle('hidden-node', isLogin); }
+        async function handleAuth() {
+            let log = document.getElementById('login').value.trim();
+            let pas = document.getElementById('pass').value.trim();
+            if(!log || !pas) return;
+            if(!log.startsWith('@')) log = '@' + log;
+            if (isLogin) {
+                const { data } = await _supabase.from('queue').select('*').eq('tg_login', log).eq('password', pas).single();
+                if(!data) return alert("!");
+                currentUser = data;
+            } else {
+                const { data, error } = await _supabase.from('queue').insert([{ tg_login: log, password: pas, avatar: document.getElementById('avatar').value || '👤' }]).select();
+                if(error) return alert("!");
+                currentUser = data[0];
+            }
+            document.getElementById('auth-screen').classList.add('hidden-node');
+            document.getElementById('main-screen').classList.remove('hidden-node');
+            document.getElementById('u-avatar').innerText = currentUser.avatar;
+            document.getElementById('u-name').innerText = currentUser.tg_login;
+            sync();
+        }
         async function toggleAdminStatus() { await _supabase.from('settings').update({ admin_online: !config.admin_online }).eq('id', 1); }
         async function toggleSiteActive() { await _supabase.from('settings').update({ site_active: !config.site_active }).eq('id', 1); }
-        async function updateSitePass() {
-            const p = document.getElementById('new-site-pass').value;
-            if(p) { await _supabase.from('settings').update({ site_pass: p }).eq('id', 1); alert("Пароль сайта изменен!"); }
-        }
-
-        async function sendAdmMsg() {
-            const t = document.getElementById('adm-msg').value;
-            if(!t) return;
-            const senderName = lastUserLogin ? `ADMIN (to ${lastUserLogin})` : "ADMIN";
-            await _supabase.from('messages').insert([{ sender: senderName, text: t }]);
-            document.getElementById('adm-msg').value = '';
-        }
-
-        async function delUser(id) { if(confirm("Удалить?")) await _supabase.from('queue').delete().eq('id', id); }
-        async function deleteAccount() { if(confirm("Удалить свой аккаунт?")) { await _supabase.from('queue').delete().eq('id', currentUser.id); location.reload(); } }
-        function openEdit() {
-            document.getElementById('edit-modal').classList.remove('hidden-node');
-            document.getElementById('new-av').value = currentUser.avatar;
-            document.getElementById('new-log').value = currentUser.tg_login;
-        }
+        async function updateSitePass() { const p = document.getElementById('new-site-pass').value; if(p) await _supabase.from('settings').update({ site_pass: p }).eq('id', 1); }
+        async function delUser(id) { if(confirm("?")) await _supabase.from('queue').delete().eq('id', id); }
+        async function deleteAccount() { if(confirm("?")) { await _supabase.from('queue').delete().eq('id', currentUser.id); location.reload(); } }
+        function openEdit() { document.getElementById('edit-modal').classList.remove('hidden-node'); document.getElementById('new-av').value = currentUser.avatar; document.getElementById('new-log').value = currentUser.tg_login; }
         function closeEdit() { document.getElementById('edit-modal').classList.add('hidden-node'); }
-        async function saveEdit() {
-            await _supabase.from('queue').update({ avatar: document.getElementById('new-av').value, tg_login: document.getElementById('new-log').value }).eq('id', currentUser.id);
-            location.reload();
-        }
+        async function saveEdit() { await _supabase.from('queue').update({ avatar: document.getElementById('new-av').value, tg_login: document.getElementById('new-log').value }).eq('id', currentUser.id); location.reload(); }
 
         init();
     </script>
