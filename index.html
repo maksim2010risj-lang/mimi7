@@ -3,104 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Queue Pro Max</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Queue Pro</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background: #05060a; color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; }
-        .glass { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(30px); border: 1px solid rgba(255, 255, 255, 0.07); box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        body { background: #05060a; color: white; font-family: sans-serif; }
+        .glass { background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
         .hidden-node { display: none !important; }
-        .btn-main { background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%); transition: 0.3s; }
-        .btn-main:active { transform: scale(0.96); }
-        .btn-tg { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); transition: 0.3s; }
-        input { background: rgba(255,255,255,0.05) !important; border: 1px solid rgba(255,255,255,0.1) !important; text-align: center; color: white; }
-        input:focus { border-color: #6366f1 !important; outline: none; }
-        .status-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
-        .online { background: #10b981; box-shadow: 0 0 15px #10b981; }
-        .offline { background: #ef4444; }
+        input { background: rgba(255,255,255,0.05) !important; border: 1px solid rgba(255,255,255,0.1) !important; color: white; text-align: center; }
+        .btn-blue { background: linear-gradient(135deg, #6366f1, #4338ca); }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
 
-    <div id="admin-trigger" onclick="handleAdminClick()" class="fixed top-6 left-6 text-indigo-500 font-black cursor-pointer select-none text-2xl opacity-10">Q</div>
+    <div id="admin-trigger" onclick="handleAdminClick()" class="fixed top-4 left-4 opacity-5 cursor-pointer select-none">Q</div>
 
     <div id="app" class="w-full max-w-md">
-
-        <div id="site-lock-screen" class="glass p-10 rounded-[3rem] text-center">
-            <h2 class="text-2xl font-bold mb-8 uppercase tracking-widest">Введите пароль</h2>
-            <input type="password" id="site-pass-input" placeholder="••••" class="w-full p-4 rounded-2xl text-2xl tracking-[0.5em] mb-4 outline-none">
-            <button onclick="checkSitePass()" class="btn-main w-full py-4 rounded-2xl font-bold uppercase tracking-widest mb-3">Войти</button>
-            <button onclick="window.location.href='https://t.me/mimimimimoooo7'" class="btn-tg w-full py-4 rounded-2xl font-medium text-sm text-white/70 flex items-center justify-center gap-2">
-                Узнать пароль
-            </button>
+        <div id="site-lock" class="glass p-10 rounded-[2rem] text-center">
+            <h2 class="text-xl font-bold mb-6">Введите пароль</h2>
+            <input type="password" id="site-pass" placeholder="••••" class="w-full p-4 rounded-xl mb-4 outline-none">
+            <button onclick="checkSitePass()" class="btn-blue w-full py-4 rounded-xl font-bold uppercase mb-4">Войти</button>
+            <button onclick="window.location.href='https://t.me/mimimimimoooo7'" class="text-indigo-400 text-sm">Узнать пароль</button>
         </div>
-        
-        <div id="auth-screen" class="hidden-node glass p-8 rounded-[3rem] text-center">
-            <h2 id="auth-title" class="text-2xl font-black mb-8 uppercase">Войти</h2>
-            <div id="reg-fields" class="mb-6 hidden-node">
-                <label class="text-[10px] text-gray-500 uppercase block mb-2 font-bold">Выбери Эмодзи</label>
-                <input type="text" id="tg-avatar" placeholder="🚀" maxlength="2" class="w-20 text-4xl p-3 rounded-2xl mx-auto block">
+
+        <div id="auth-screen" class="hidden-node glass p-8 rounded-[2rem] text-center">
+            <h2 id="auth-title" class="text-2xl font-bold mb-8">ВОЙТИ</h2>
+            
+            <div id="reg-fields" class="mb-4 hidden-node">
+                <p class="text-[10px] text-gray-500 mb-2 uppercase">Выбери Эмодзи</p>
+                <input type="text" id="avatar" placeholder="🚀" maxlength="2" class="w-20 p-3 text-3xl rounded-xl mx-auto block">
             </div>
+
             <div class="space-y-4">
-                <input type="text" id="tg-login" placeholder="@логин_телеграм" class="w-full p-4 rounded-2xl outline-none">
-                <input type="password" id="tg-pass" placeholder="Пароль" class="w-full p-4 rounded-2xl outline-none">
+                <input type="text" id="login" placeholder="@твой_логин" class="w-full p-4 rounded-xl outline-none">
+                <input type="password" id="pass" placeholder="Пароль" class="w-full p-4 rounded-xl outline-none">
             </div>
-            <button onclick="handleAuth()" id="main-auth-btn" class="btn-main w-full py-4 rounded-2xl font-bold mt-8 text-lg uppercase">Войти</button>
-            <button onclick="toggleAuthMode()" id="toggle-btn" class="w-full mt-6 text-xs text-indigo-400 font-bold uppercase">Регистрация</button>
+
+            <button onclick="handleAuth()" id="auth-btn" class="btn-blue w-full py-4 rounded-xl font-bold mt-8 uppercase">Войти</button>
+            <button onclick="toggleMode()" id="mode-btn" class="mt-4 text-gray-500 text-sm">Нет аккаунта? Регистрация</button>
         </div>
 
-        <div id="user-screen" class="hidden-node glass p-8 rounded-[3rem] text-center">
-            <div class="flex justify-between items-center mb-6 px-2">
-                <button onclick="openEditProfile()" class="text-[10px] bg-white/5 px-4 py-2 rounded-full text-gray-400 font-black uppercase">Профиль</button>
-                <div class="flex items-center text-[10px] font-black text-gray-500 uppercase">
-                    <span id="admin-status-dot" class="status-dot offline mr-2"></span>
-                    Admin: <span id="admin-status-text" class="ml-1 text-white">Off</span>
+        <div id="main-screen" class="hidden-node glass p-8 rounded-[2rem] text-center">
+            <div class="flex justify-between items-center mb-6">
+                <button onclick="openEdit()" class="text-[10px] uppercase font-bold text-gray-400">Профиль</button>
+                <div class="flex items-center text-[10px] font-bold">
+                    <div id="adm-dot" class="w-2 h-2 rounded-full mr-2 bg-red-500"></div>
+                    ADMIN: <span id="adm-txt" class="ml-1 uppercase">Off</span>
                 </div>
             </div>
-            <div id="user-avatar-display" class="text-7xl mb-4">🚀</div>
-            <h2 id="user-name-display" class="text-xl font-bold mb-8 text-indigo-400">@user</h2>
-            <div class="bg-indigo-600/5 border border-indigo-500/20 py-10 rounded-[2.5rem] mb-8">
-                <p class="text-gray-500 text-[10px] uppercase font-black tracking-widest mb-2">Место в очереди</p>
-                <p id="queue-pos" class="text-7xl font-black text-white tracking-tighter">#--</p>
+            <div id="u-avatar" class="text-6xl mb-2">🚀</div>
+            <div id="u-name" class="text-lg font-bold text-indigo-400 mb-6">@user</div>
+            
+            <div class="bg-white/5 border border-white/10 py-10 rounded-3xl mb-6">
+                <p class="text-gray-500 text-[10px] uppercase mb-1">Твое место</p>
+                <p id="pos" class="text-6xl font-black">#--</p>
             </div>
-            <div class="chat-box bg-black/40 border border-white/5 rounded-2xl p-4 text-left text-[12px] mb-4 max-h-[200px] overflow-y-auto space-y-3" id="chat-messages"></div>
+
+            <div id="chat" class="bg-black/40 h-40 overflow-y-auto rounded-2xl p-4 text-left text-xs mb-4 space-y-2"></div>
             <div class="flex gap-2">
-                <input type="text" id="chat-input" placeholder="Написать..." class="flex-1 p-4 rounded-2xl text-sm outline-none">
-                <button onclick="sendMsg()" class="btn-main px-6 rounded-2xl font-bold">></button>
+                <input type="text" id="msg-input" placeholder="Сообщение..." class="flex-1 p-3 rounded-xl text-sm">
+                <button onclick="sendMsg()" class="btn-blue px-4 rounded-xl">></button>
             </div>
-            <button onclick="location.reload()" class="mt-8 text-[10px] text-gray-600 font-black uppercase">Выход</button>
         </div>
 
-        <div id="admin-screen" class="hidden-node glass p-8 rounded-[3rem] w-[95vw] max-w-5xl">
-            <div class="flex justify-between items-center mb-8">
-                <h2 class="text-2xl font-black">ADMIN</h2>
-                <div class="flex gap-3">
-                    <button onclick="toggleAdminStatus()" id="admin-online-btn" class="text-[9px] px-4 py-2 rounded-xl font-black uppercase tracking-widest bg-white/5 text-white"></button>
-                    <button onclick="location.reload()" class="bg-red-500/20 text-red-500 px-4 py-2 rounded-xl text-[9px] font-black uppercase">Выход</button>
-                </div>
+        <div id="admin-screen" class="hidden-node glass p-6 rounded-[2rem] w-full max-w-4xl">
+            <div class="flex justify-between mb-6">
+                <h2 class="font-bold">ADMIN PANEL</h2>
+                <button onclick="toggleAdminStatus()" id="adm-status-btn" class="text-[10px] px-3 py-1 rounded-lg bg-white/10">STATUS</button>
+                <button onclick="location.reload()" class="text-red-500 text-[10px] font-bold">EXIT</button>
             </div>
-            <div class="grid lg:grid-cols-2 gap-8">
-                <div class="space-y-3 max-h-[500px] overflow-y-auto" id="admin-list"></div>
-                <div class="flex flex-col h-[500px]">
-                    <div class="chat-box flex-1 bg-black/60 rounded-3xl p-6 mb-4 overflow-y-auto" id="admin-chat"></div>
-                    <div class="flex gap-2">
-                        <input type="text" id="admin-input" placeholder="Ответ..." class="flex-1 p-4 rounded-xl text-sm outline-none bg-white/5">
-                        <button onclick="sendAdminMsg()" class="btn-main px-8 rounded-xl font-black">SEND</button>
-                    </div>
-                </div>
+            <div id="admin-list" class="space-y-2 mb-6 max-h-60 overflow-y-auto"></div>
+            <div id="admin-chat" class="bg-black/40 h-40 overflow-y-auto rounded-xl p-4 text-xs mb-4"></div>
+            <div class="flex gap-2">
+                <input type="text" id="adm-msg" placeholder="Ответ..." class="flex-1 p-3 rounded-xl">
+                <button onclick="sendAdmMsg()" class="btn-blue px-6 rounded-xl font-bold">SEND</button>
             </div>
         </div>
     </div>
 
-    <div id="profile-modal" class="hidden-node fixed inset-0 bg-black/95 flex items-center justify-center z-[200] p-6">
-        <div class="glass p-10 rounded-[3rem] w-full max-w-sm">
-            <h3 class="text-xl font-black mb-8 text-center uppercase">Профиль</h3>
-            <div class="space-y-5">
-                <input type="text" id="edit-avatar" class="w-full p-4 rounded-2xl text-5xl">
-                <input type="text" id="edit-login" class="w-full p-4 rounded-2xl font-bold">
-                <button onclick="saveProfile()" class="w-full btn-main py-5 rounded-2xl font-black uppercase">ОК</button>
-                <button onclick="closeEditProfile()" class="w-full text-gray-500 text-[10px] font-black uppercase">Отмена</button>
-            </div>
+    <div id="edit-modal" class="hidden-node fixed inset-0 bg-black/90 flex items-center justify-center p-6 z-50">
+        <div class="glass p-8 rounded-3xl w-full max-w-sm">
+            <h3 class="font-bold mb-4 uppercase">Изменить профиль</h3>
+            <input type="text" id="new-av" class="w-full p-4 rounded-xl text-4xl mb-4">
+            <input type="text" id="new-log" class="w-full p-4 rounded-xl mb-4 font-bold">
+            <button onclick="saveEdit()" class="btn-blue w-full py-4 rounded-xl font-bold mb-2">СОХРАНИТЬ</button>
+            <button onclick="closeEdit()" class="w-full text-gray-500 text-xs">ОТМЕНА</button>
         </div>
     </div>
 
@@ -111,163 +98,150 @@
         const ADM_HASH = "5308693c0919f35928d172e873114d640243454b5269559c77c688849646b5d9";
 
         let currentUser = null;
-        let isLoginMode = true;
-        let siteConfig = { site_pass: "1234", admin_online: false };
-        let adminClicks = 0;
+        let isLogin = true;
+        let config = { site_pass: "1234", admin_online: false };
+        let clicks = 0;
 
         async function init() {
-            try {
-                const { data } = await _supabase.from('settings').select('*').eq('id', 1).single();
-                if (data) siteConfig = data;
-            } catch (e) { console.log("Используем стандартный пароль"); }
-            syncSettings();
-            setInterval(syncSettings, 5000);
+            const { data } = await _supabase.from('settings').select('*').eq('id', 1).single();
+            if (data) config = data;
+            setInterval(sync, 5000);
         }
 
-        async function syncSettings() {
+        async function sync() {
             const { data } = await _supabase.from('settings').select('*').eq('id', 1).single();
             if (data) {
-                siteConfig = data;
-                const dot = document.getElementById('admin-status-dot');
-                const txt = document.getElementById('admin-status-text');
-                if (dot && txt) {
-                    dot.className = `status-dot ${siteConfig.admin_online ? 'online' : 'offline'}`;
-                    txt.innerText = siteConfig.admin_online ? 'On' : 'Off';
+                config = data;
+                const d = document.getElementById('adm-dot');
+                const t = document.getElementById('adm-txt');
+                if(d && t) {
+                    d.className = `w-2 h-2 rounded-full mr-2 ${config.admin_online ? 'bg-green-500' : 'bg-red-500'}`;
+                    t.innerText = config.admin_online ? 'On' : 'Off';
                 }
             }
         }
 
         function checkSitePass() {
-            const input = document.getElementById('site-pass-input').value;
-            // Проверка по базе или по стандартному 1234
-            if (input === siteConfig.site_pass || input === "1234") {
-                document.getElementById('site-lock-screen').classList.add('hidden-node');
+            const val = document.getElementById('site-pass').value;
+            if (val === config.site_pass || val === "1234") {
+                document.getElementById('site-lock').classList.add('hidden-node');
                 document.getElementById('auth-screen').classList.remove('hidden-node');
-            } else {
-                alert("Неверный пароль!");
-            }
+            } else alert("Неверно!");
         }
 
-        function toggleAuthMode() {
-            isLoginMode = !isLoginMode;
-            document.getElementById('auth-title').innerText = isLoginMode ? "Войти" : "Регистрация";
-            document.getElementById('main-auth-btn').innerText = isLoginMode ? "Войти" : "Регистрация";
-            document.getElementById('toggle-btn').innerText = isLoginMode ? "Регистрация" : "Войти";
-            document.getElementById('reg-fields').classList.toggle('hidden-node', isLoginMode);
+        function toggleMode() {
+            isLogin = !isLogin;
+            document.getElementById('auth-title').innerText = isLogin ? "ВОЙТИ" : "РЕГИСТРАЦИЯ";
+            document.getElementById('auth-btn').innerText = isLogin ? "Войти" : "Создать";
+            document.getElementById('mode-btn').innerText = isLogin ? "Нет аккаунта? Регистрация" : "Уже есть аккаунт? Войти";
+            document.getElementById('reg-fields').classList.toggle('hidden-node', isLogin);
         }
 
         async function handleAuth() {
-            let login = document.getElementById('tg-login').value.trim();
-            const pass = document.getElementById('tg-pass').value.trim();
-            if (!login || !pass) return alert("Заполни поля!");
-            if (!login.startsWith('@')) login = '@' + login;
+            let log = document.getElementById('login').value.trim();
+            let pas = document.getElementById('pass').value.trim();
+            if(!log || !pas) return alert("Заполни поля!");
+            if(!log.startsWith('@')) log = '@' + log;
 
-            if (isLoginMode) {
-                const { data } = await _supabase.from('queue').select('*').eq('tg_login', login).eq('password', pass).single();
-                if (!data) return alert("Ошибка входа!");
+            if (isLogin) {
+                const { data } = await _supabase.from('queue').select('*').eq('tg_login', log).eq('password', pas).single();
+                if(!data) return alert("Неверный логин или пароль!");
                 currentUser = data;
-                if (currentUser.blocked_until && new Date(currentUser.blocked_until) > new Date()) return alert("Вы забанены!");
-                showUserScreen();
+                startApp();
             } else {
-                const { data, error } = await _supabase.from('queue').insert([{ tg_login: login, password: pass, avatar: document.getElementById('tg-avatar').value || '👤' }]).select();
-                if (error) return alert("Логин занят!");
+                const { data, error } = await _supabase.from('queue').insert([{ tg_login: log, password: pas, avatar: document.getElementById('avatar').value || '👤' }]).select();
+                if(error) return alert("Логин уже занят!");
                 currentUser = data[0];
-                showUserScreen();
+                startApp();
             }
         }
 
-        function showUserScreen() {
+        function startApp() {
             document.getElementById('auth-screen').classList.add('hidden-node');
-            document.getElementById('user-screen').classList.remove('hidden-node');
-            document.getElementById('user-avatar-display').innerText = currentUser.avatar;
-            document.getElementById('user-name-display').innerText = currentUser.tg_login;
-            updateQueuePos();
-            loadMessages();
-            setInterval(updateQueuePos, 5000);
-            setInterval(loadMessages, 3000);
+            document.getElementById('main-screen').classList.remove('hidden-node');
+            document.getElementById('u-avatar').innerText = currentUser.avatar;
+            document.getElementById('u-name').innerText = currentUser.tg_login;
+            updatePos();
+            loadMsgs();
+            setInterval(updatePos, 5000);
+            setInterval(loadMsgs, 3000);
         }
 
-        async function updateQueuePos() {
+        async function updatePos() {
             const { data } = await _supabase.from('queue').select('id').order('created_at', { ascending: true });
-            const pos = data.findIndex(i => i.id === currentUser.id) + 1;
-            document.getElementById('queue-pos').innerText = pos > 0 ? '#' + pos : '---';
+            const p = data.findIndex(i => i.id === currentUser.id) + 1;
+            document.getElementById('pos').innerText = p > 0 ? '#' + p : '---';
         }
 
-        async function loadMessages() {
+        async function loadMsgs() {
             const { data } = await _supabase.from('messages').select('*').order('created_at', { ascending: true });
-            const html = data.map(m => `<div class="mb-2"><b class="text-[9px] uppercase ${m.sender === 'ADMIN' ? 'text-indigo-400' : 'text-gray-500'}">${m.sender}:</b><div class="bg-white/5 p-2 rounded-xl mt-1">${m.text}</div></div>`).join('');
-            [document.getElementById('chat-messages'), document.getElementById('admin-chat')].forEach(b => { if(b) b.innerHTML = html; });
+            const h = data.map(m => `<div class="mb-2"><b class="${m.sender === 'ADMIN' ? 'text-indigo-400' : 'text-gray-500'}">${m.sender}:</b><div class="bg-white/5 p-2 rounded-lg">${m.text}</div></div>`).join('');
+            [document.getElementById('chat'), document.getElementById('admin-chat')].forEach(b => { if(b) b.innerHTML = h; });
         }
 
         async function sendMsg() {
-            const txt = document.getElementById('chat-input').value;
-            if(!txt) return;
-            await _supabase.from('messages').insert([{ sender: currentUser.tg_login, text: txt }]);
-            document.getElementById('chat-input').value = '';
+            const t = document.getElementById('msg-input').value;
+            if(!t) return;
+            await _supabase.from('messages').insert([{ sender: currentUser.tg_login, text: t }]);
+            document.getElementById('msg-input').value = '';
         }
 
-        function openEditProfile() {
-            document.getElementById('profile-modal').classList.remove('hidden-node');
-            document.getElementById('edit-avatar').value = currentUser.avatar;
-            document.getElementById('edit-login').value = currentUser.tg_login;
+        function openEdit() {
+            document.getElementById('edit-modal').classList.remove('hidden-node');
+            document.getElementById('new-av').value = currentUser.avatar;
+            document.getElementById('new-log').value = currentUser.tg_login;
         }
-        function closeEditProfile() { document.getElementById('profile-modal').classList.add('hidden-node'); }
-        async function saveProfile() {
-            await _supabase.from('queue').update({ avatar: document.getElementById('edit-avatar').value, tg_login: document.getElementById('edit-login').value }).eq('id', currentUser.id);
+        function closeEdit() { document.getElementById('edit-modal').classList.add('hidden-node'); }
+        async function saveEdit() {
+            await _supabase.from('queue').update({ avatar: document.getElementById('new-av').value, tg_login: document.getElementById('new-log').value }).eq('id', currentUser.id);
             location.reload();
         }
 
         async function handleAdminClick() {
-            adminClicks++;
-            if(adminClicks >= 15) {
-                const p = prompt("ADMIN PASS:");
-                const userHash = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(p)))).map(b => b.toString(16).padStart(2, '0')).join('');
-                if(userHash === ADM_HASH) showAdminScreen();
-                adminClicks = 0;
+            clicks++;
+            if(clicks >= 15) {
+                const p = prompt("PASS:");
+                const h = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(p)))).map(b => b.toString(16).padStart(2, '0')).join('');
+                if(h === ADM_HASH) showAdmin();
+                clicks = 0;
             }
         }
 
-        function showAdminScreen() {
+        function showAdmin() {
             document.querySelectorAll('#app > div').forEach(d => d.classList.add('hidden-node'));
             document.getElementById('admin-screen').classList.remove('hidden-node');
-            loadAdminList();
-            setInterval(loadAdminList, 5000);
-            updateAdminUI();
+            loadAdmList();
+            setInterval(loadAdmList, 5000);
         }
 
-        function updateAdminUI() {
-            const btn = document.getElementById('admin-online-btn');
-            btn.innerText = siteConfig.admin_online ? "ME: ONLINE" : "ME: OFFLINE";
-            btn.classList.toggle('text-green-500', siteConfig.admin_online);
+        async function loadAdmList() {
+            const { data } = await _supabase.from('queue').select('*').order('created_at', { ascending: true });
+            document.getElementById('admin-list').innerHTML = data.map((u, i) => `
+                <div class="flex items-center justify-between bg-white/5 p-3 rounded-xl">
+                    <div class="flex items-center gap-3"><span>${u.avatar}</span><b>${u.tg_login}</b></div>
+                    <div class="flex gap-2">
+                        <button onclick="ban('${u.id}')" class="text-xs text-yellow-500">BAN</button>
+                        <button onclick="del('${u.id}')" class="text-xs text-red-500">DEL</button>
+                    </div>
+                </div>
+            `).join('');
+            document.getElementById('adm-status-btn').innerText = config.admin_online ? "MY STATUS: ON" : "MY STATUS: OFF";
         }
 
         async function toggleAdminStatus() {
-            await _supabase.from('settings').update({ admin_online: !siteConfig.admin_online }).eq('id', 1);
-            init();
-            updateAdminUI();
+            await _supabase.from('settings').update({ admin_online: !config.admin_online }).eq('id', 1);
+            sync();
         }
 
-        async function loadAdminList() {
-            const { data } = await _supabase.from('queue').select('*').order('created_at', { ascending: true });
-            document.getElementById('admin-list').innerHTML = data.map((u, i) => `
-                <div class="flex items-center justify-between bg-white/5 p-4 rounded-2xl border border-white/5">
-                    <div class="flex items-center gap-4"><span class="text-3xl">${u.avatar}</span><div><div class="font-bold text-sm text-white">${u.tg_login}</div><div class="text-[9px] text-indigo-400">#${i+1}</div></div></div>
-                    <div class="flex gap-2"><button onclick="blockUser('${u.id}')" class="bg-yellow-500/10 text-yellow-500 text-[9px] px-3 py-2 rounded-xl">BAN</button><button onclick="skipUser('${u.id}')" class="bg-red-500/10 text-red-500 text-[9px] px-3 py-2 rounded-xl">DEL</button></div>
-                </div>
-            `).join('');
+        async function del(id) { if(confirm("Удалить?")) await _supabase.from('queue').delete().eq('id', id); }
+        async function ban(id) { 
+            const m = prompt("Минут:"); 
+            if(m) await _supabase.from('queue').update({ blocked_until: new Date(Date.now() + m * 60000).toISOString() }).eq('id', id); 
         }
-
-        async function blockUser(id) {
-            const m = prompt("Минут бана:", "60");
-            if(m) await _supabase.from('queue').update({ blocked_until: new Date(Date.now() + m * 60000).toISOString() }).eq('id', id);
-        }
-
-        async function skipUser(id) { if(confirm("Удалить?")) await _supabase.from('queue').delete().eq('id', id); loadAdminList(); }
-
-        async function sendAdminMsg() {
-            const txt = document.getElementById('admin-input').value;
-            if(txt) await _supabase.from('messages').insert([{ sender: 'ADMIN', text: txt }]);
-            document.getElementById('admin-input').value = '';
+        async function sendAdmMsg() {
+            const t = document.getElementById('adm-msg').value;
+            if(t) await _supabase.from('messages').insert([{ sender: 'ADMIN', text: t }]);
+            document.getElementById('adm-msg').value = '';
         }
 
         init();
