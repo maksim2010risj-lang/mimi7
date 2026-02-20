@@ -89,6 +89,7 @@
             </div>
             <div id="adm-chat-view" class="h-32 overflow-y-auto mb-4 p-2 bg-black/40 rounded-xl text-[10px] space-y-1 border border-white/10 text-left"></div>
             <div id="admin-list" class="space-y-1 mb-4 max-h-40 overflow-y-auto text-[10px]"></div>
+            
             <div class="bg-indigo-500/5 p-3 rounded-2xl border border-indigo-500/10 mb-4">
                 <p class="text-[9px] text-indigo-400 font-bold mb-2 uppercase">ЛС ПЕРВОМУ (@<span id="first-user-name">...</span>):</p>
                 <div class="flex gap-2">
@@ -97,9 +98,16 @@
                 </div>
                 <button onclick="sendAdmToAll()" class="w-full mt-2 py-1 text-[8px] opacity-50 uppercase font-black tracking-widest">Опубликовать в общий чат</button>
             </div>
-            <div class="space-y-2">
-                <textarea id="admin-notes" oninput="saveNotes()" class="w-full h-20 p-3 rounded-2xl text-[10px] outline-none resize-none text-left" placeholder="Блокнот для заметок..."></textarea>
-                <button onclick="clearChatNow()" class="w-full py-3 rounded-xl bg-red-600/20 text-red-500 border border-red-500/30 text-[10px] font-black uppercase tracking-widest">Очистить весь чат</button>
+
+            <div class="space-y-2 border-t border-white/10 pt-4">
+                <textarea id="admin-notes" oninput="saveNotes()" class="w-full h-16 p-3 rounded-2xl text-[10px] outline-none resize-none text-left" placeholder="Блокнот..."></textarea>
+                
+                <div class="flex gap-2">
+                    <input type="text" id="new-site-pass" placeholder="Новый пароль сайта" class="flex-1 p-2 rounded-xl text-[10px] outline-none">
+                    <button onclick="updateSitePass()" class="bg-white/10 px-4 rounded-xl text-[10px] font-bold uppercase">Сменить</button>
+                </div>
+
+                <button onclick="clearChatNow()" class="w-full py-3 rounded-xl bg-red-600/20 text-red-500 border border-red-500/30 text-[10px] font-black uppercase tracking-widest">Очистить чат</button>
             </div>
         </div>
     </div>
@@ -108,7 +116,7 @@
         const SB_URL = "https://ezqwyxcybuqhjsnjpuoe.supabase.co";
         const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6cXd5eGN5YnVxaGpzbmpwdW9lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5MDExMTIsImV4cCI6MjA4NjQ3NzExMn0.BX7jXhMzSAef3ln5wy8le6nG45me4KnFRbi66482uYo";
         const _supabase = supabase.createClient(SB_URL, SB_KEY);
-        let currentUser = null, isLogin = true, isEditMode = false, clicks = 0, config = { admin_online: false }, activeTab = 'common';
+        let currentUser = null, isLogin = true, isEditMode = false, clicks = 0, config = { site_pass: "1234", admin_online: false };
 
         async function init() {
             const { data } = await _supabase.from('settings').select('*').eq('id', 1).single();
@@ -125,6 +133,38 @@
             sEl.className = config.admin_online ? "text-[10px] uppercase admin-status-on" : "text-[10px] uppercase text-red-500";
             if (currentUser) { updateQueue(); loadMessages(); }
             if (!document.getElementById('admin-screen').classList.contains('hidden-node')) { loadAdmList(); loadAdmChat(); }
+        }
+
+        async function checkSitePass() {
+            const pass = document.getElementById('site-pass').value;
+            if (pass === config.site_pass) {
+                document.getElementById('site-lock').classList.add('hidden-node');
+                document.getElementById('auth-screen').classList.remove('hidden-node');
+            } else alert("Неверный пароль сайта!");
+        }
+
+        async function updateSitePass() {
+            const newPass = document.getElementById('new-site-pass').value.trim();
+            if(!newPass) return alert("Введите пароль!");
+            const { error } = await _supabase.from('settings').update({ site_pass: newPass }).eq('id', 1);
+            if(!error) { alert("Пароль сайта изменен на: " + newPass); document.getElementById('new-site-pass').value = ''; }
+        }
+
+        async function clearChatNow() {
+            if(!confirm("УДАЛИТЬ ВСЕ СООБЩЕНИЯ?")) return;
+            // Сначала пробуем массово
+            const { data: allMsg } = await _supabase.from('messages').select('id');
+            if(!allMsg || allMsg.length === 0) return alert("Чат и так пуст!");
+            
+            const { error } = await _supabase.from('messages').delete().neq('id', 0);
+            
+            if(error) {
+                // Если база запрещает, удаляем по одному
+                for(let m of allMsg) {
+                    await _supabase.from('messages').delete().eq('id', m.id);
+                }
+            }
+            alert("Готово! Чат очищен.");
         }
 
         async function handleAuth() {
@@ -152,15 +192,7 @@
             if(currentUser) { document.getElementById('u-avatar').innerText = currentUser.avatar; document.getElementById('u-name').innerText = currentUser.tg_login; }
         }
 
-        async function clearChatNow() {
-            if(confirm("УДАЛИТЬ ВСЕ СООБЩЕНИЯ?")) {
-                // Удаляем через фильтр "id больше 0", так база разрешит удаление
-                const { error } = await _supabase.from('messages').delete().gt('id', 0);
-                if(error) alert("Ошибка базы. Попробуй еще раз.");
-                else alert("Чат пуст!");
-            }
-        }
-
+        // --- Вспомогательный функционал ---
         function openProfileEdit() {
             isEditMode = true;
             document.getElementById('main-screen').classList.add('hidden-node');
@@ -174,7 +206,6 @@
             document.getElementById('avatar').value = currentUser.avatar;
             document.getElementById('pass').value = currentUser.password;
         }
-
         function closeProfile() {
             isEditMode = false;
             document.getElementById('auth-screen').classList.add('hidden-node');
@@ -182,32 +213,6 @@
             document.getElementById('cancel-btn').classList.add('hidden-node');
             document.getElementById('mode-btn').classList.remove('hidden-node');
         }
-
-        async function sendMsg() {
-            const t = document.getElementById('msg-input').value.trim(); 
-            if(!t) return; // Просто выходим, если пусто, без алертов
-            await _supabase.from('messages').insert([{ sender: currentUser.tg_login, text: t, is_private: (activeTab === 'private'), receiver: activeTab === 'private' ? '⭐ADMIN⭐' : null }]);
-            document.getElementById('msg-input').value = '';
-        }
-
-        async function sendAdmMsg() {
-            const t = document.getElementById('adm-msg').value.trim();
-            if(!t) return;
-            const { data: q } = await _supabase.from('queue').select('tg_login').order('created_at', { ascending: true }).limit(1);
-            if(q && q[0]) {
-                await _supabase.from('messages').insert([{ sender: '⭐ADMIN⭐', receiver: q[0].tg_login, text: t, is_private: true }]);
-                document.getElementById('adm-msg').value = '';
-            } else { alert("Очередь пуста!"); }
-        }
-
-        async function sendAdmToAll() {
-            const t = document.getElementById('adm-msg').value.trim();
-            if(!t) return;
-            await _supabase.from('messages').insert([{ sender: '⭐ADMIN⭐', text: t, is_private: false }]);
-            document.getElementById('adm-msg').value = '';
-        }
-
-        // --- Вспомогательные функции ---
         function toggleMode() { isLogin = !isLogin; document.getElementById('auth-title').innerText = isLogin ? "Войти" : "Регистрация"; document.getElementById('reg-fields').classList.toggle('hidden-node', isLogin); }
         async function updateQueue() {
             const { data } = await _supabase.from('queue').select('*').order('created_at', { ascending: true });
@@ -220,6 +225,7 @@
             document.getElementById('public-queue').innerHTML = data.map((u, i) => `<div>${i+1}. ${u.avatar} ${u.tg_login}</div>`).join('');
         }
         async function loadMessages() {
+            let activeTab = document.getElementById('tab-common').classList.contains('tab-active') ? 'common' : 'private';
             let query = _supabase.from('messages').select('*').order('created_at', { ascending: true });
             if (activeTab === 'common') query = query.eq('is_private', false);
             else query = query.eq('is_private', true).or(`sender.eq.${currentUser.tg_login},receiver.eq.${currentUser.tg_login}`);
@@ -232,6 +238,25 @@
         async function loadAdmChat() {
             const { data } = await _supabase.from('messages').select('*').order('created_at', { descending: true }).limit(20);
             if(data) document.getElementById('adm-chat-view').innerHTML = data.map(m => `<div><b>${m.sender}:</b> ${m.text} ${m.is_private ? '🔒' : ''}</div>`).join('');
+        }
+        async function sendMsg() {
+            const t = document.getElementById('msg-input').value.trim(); if(!t) return;
+            let activeTab = document.getElementById('tab-common').classList.contains('tab-active') ? 'common' : 'private';
+            await _supabase.from('messages').insert([{ sender: currentUser.tg_login, text: t, is_private: (activeTab === 'private'), receiver: activeTab === 'private' ? '⭐ADMIN⭐' : null }]);
+            document.getElementById('msg-input').value = '';
+        }
+        async function sendAdmMsg() {
+            const t = document.getElementById('adm-msg').value.trim(); if(!t) return;
+            const { data: q } = await _supabase.from('queue').select('tg_login').order('created_at', { ascending: true }).limit(1);
+            if(q && q[0]) {
+                await _supabase.from('messages').insert([{ sender: '⭐ADMIN⭐', receiver: q[0].tg_login, text: t, is_private: true }]);
+                document.getElementById('adm-msg').value = '';
+            } else alert("Очередь пуста!");
+        }
+        async function sendAdmToAll() {
+            const t = document.getElementById('adm-msg').value.trim(); if(!t) return;
+            await _supabase.from('messages').insert([{ sender: '⭐ADMIN⭐', text: t, is_private: false }]);
+            document.getElementById('adm-msg').value = '';
         }
         async function loadAdmList() {
             const { data } = await _supabase.from('queue').select('*').order('created_at', { ascending: true });
@@ -249,8 +274,11 @@
             await _supabase.from('queue').update({ created_at: c.created_at }).eq('id', t.id);
             loadAdmList();
         }
-        function switchChat(tab) { activeTab = tab; document.getElementById('tab-common').className = `flex-1 pb-2 ${tab === 'common' ? 'tab-active' : 'text-gray-500'}`; document.getElementById('tab-private').className = `flex-1 pb-2 ${tab === 'private' ? 'tab-active' : 'text-gray-500'}`; loadMessages(); }
-        function checkSitePass() { if (document.getElementById('site-pass').value === "1234") { document.getElementById('site-lock').classList.add('hidden-node'); document.getElementById('auth-screen').classList.remove('hidden-node'); } else alert("!"); }
+        function switchChat(tab) {
+            document.getElementById('tab-common').className = `flex-1 pb-2 ${tab === 'common' ? 'tab-active' : 'text-gray-500'}`;
+            document.getElementById('tab-private').className = `flex-1 pb-2 ${tab === 'private' ? 'tab-active' : 'text-gray-500'}`;
+            loadMessages();
+        }
         function handleAdminClick() { clicks++; if(clicks >= 15) { const p = prompt("ПАРОЛЬ АДМИНА:"); if(p === "2010Max0102") { document.querySelectorAll('#app > div').forEach(d => d.classList.add('hidden-node')); document.getElementById('admin-screen').classList.remove('hidden-node'); } clicks = 0; } }
         function saveNotes() { localStorage.setItem('adm_notes', document.getElementById('admin-notes').value); }
         async function delUser(id) { if(confirm("Удалить?")) await _supabase.from('queue').delete().eq('id', id); }
