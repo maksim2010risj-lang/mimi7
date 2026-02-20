@@ -12,6 +12,7 @@
         .hidden-node { display: none !important; }
         input { background: rgba(255,255,255,0.05) !important; border: 1px solid rgba(255,255,255,0.1) !important; color: white; text-align: center; }
         .btn-blue { background: linear-gradient(135deg, #6366f1, #4338ca); }
+        .btn-star { background: rgba(255, 215, 0, 0.1); border: 1px solid rgba(255, 215, 0, 0.2); color: #ffd700; }
         .admin-btn { position: fixed; top: 10px; left: 10px; width: 40px; height: 40px; z-index: 999; opacity: 0.1; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; }
         .tab-active { border-bottom: 2px solid #6366f1; color: white; }
     </style>
@@ -27,22 +28,22 @@
 
     <div id="app" class="w-full max-w-md">
         <div id="site-lock" class="glass p-10 rounded-[2rem] text-center">
-            <h2 class="text-xl font-bold mb-6 uppercase tracking-widest">mimi7osApp</h2>
-            <input type="password" id="site-pass" placeholder="••••" class="w-full p-4 rounded-xl mb-4 outline-none">
+            <h2 class="text-2xl font-black mb-6 uppercase tracking-tighter italic text-indigo-500">mimi7osApp</h2>
+            <input type="password" id="site-pass" placeholder="КОД ДОСТУПА" class="w-full p-4 rounded-xl mb-4 outline-none">
             <button onclick="checkSitePass()" class="btn-blue w-full py-4 rounded-xl font-bold uppercase mb-4">Войти</button>
+            <a href="https://t.me/mimimimimoooo7" target="_blank" class="text-indigo-400 text-xs font-bold uppercase underline">Узнать пароль в TG</a>
         </div>
 
         <div id="auth-screen" class="hidden-node glass p-8 rounded-[2rem] text-center">
             <h2 id="auth-title" class="text-2xl font-bold mb-8 uppercase">Войти</h2>
-            <div id="reg-fields" class="mb-4 hidden-node text-center">
-                <p class="text-[9px] text-gray-500 mb-1">ВЫБЕРИ ЭМОДЗИ</p>
-                <input type="text" id="avatar" placeholder="🚀" maxlength="2" class="w-20 p-3 text-3xl rounded-xl mx-auto block">
+            <div id="reg-fields" class="mb-4 hidden-node">
+                <input type="text" id="avatar" placeholder="🚀" maxlength="2" class="w-20 p-3 text-3xl rounded-xl mx-auto block outline-none">
             </div>
             <div class="space-y-4">
                 <input type="text" id="login" placeholder="@логин" class="w-full p-4 rounded-xl outline-none">
                 <input type="password" id="pass" placeholder="Пароль" class="w-full p-4 rounded-xl outline-none">
             </div>
-            <button onclick="handleAuth()" class="btn-blue w-full py-4 rounded-xl font-bold mt-8 uppercase tracking-widest">ОК</button>
+            <button onclick="handleAuth()" class="btn-blue w-full py-4 rounded-xl font-bold mt-8 uppercase">ОК</button>
             <button onclick="toggleMode()" id="mode-btn" class="mt-4 text-gray-500 text-xs uppercase font-bold">Регистрация</button>
         </div>
 
@@ -50,25 +51,34 @@
             <div class="glass p-6 rounded-[2rem] text-center">
                 <div class="flex justify-between items-center mb-4">
                     <button onclick="openEdit()" class="text-[10px] text-gray-400 uppercase font-bold border border-white/5 px-2 py-1 rounded-lg">Профиль</button>
-                    <div id="adm-status-ui" class="flex items-center text-[10px] font-bold">
+                    <div class="flex items-center text-[10px] font-bold">
                         <div id="adm-dot" class="w-2 h-2 rounded-full mr-1 bg-red-500"></div>
-                        ADMIN: <span id="adm-txt">Off</span>
+                        ADM: <span id="adm-txt">Off</span>
                     </div>
                 </div>
+                
                 <div id="u-avatar" class="text-6xl mb-2">🚀</div>
                 <div id="u-name" class="text-lg font-bold text-indigo-400 mb-4 tracking-tight">@user</div>
-                <div class="bg-white/5 py-4 rounded-2xl mb-4">
+                
+                <div class="bg-white/5 py-4 rounded-2xl mb-4 border border-white/5">
+                    <p class="text-[9px] text-gray-500 uppercase font-bold mb-1 tracking-widest">Твоя позиция</p>
                     <p id="pos" class="text-5xl font-black italic">#--</p>
                 </div>
+
+                <div class="grid grid-cols-2 gap-2 mb-6">
+                    <button onclick="buyVip(5, 15)" class="btn-star py-3 rounded-xl text-[9px] font-bold uppercase leading-tight">Пропустить 5 чел<br><span class="opacity-70">15 ⭐</span></button>
+                    <button onclick="buyVip(15, 30)" class="btn-star py-3 rounded-xl text-[9px] font-bold uppercase leading-tight">Пропустить 15 чел<br><span class="opacity-70">25 ⭐</span></button>
+                </div>
+
                 <div id="public-queue" class="text-left space-y-1 max-h-24 overflow-y-auto text-[10px] opacity-60"></div>
             </div>
 
             <div class="glass p-4 rounded-3xl">
-                <div class="flex border-b border-white/10 mb-3 text-[10px] font-bold uppercase tracking-widest">
+                <div class="flex border-b border-white/10 mb-3 text-[10px] font-bold uppercase">
                     <button id="tab-common" onclick="switchChat('common')" class="flex-1 pb-2 tab-active">Общий</button>
-                    <button id="tab-private" onclick="switchChat('private')" class="flex-1 pb-2 text-gray-500">ЛС с Админом</button>
+                    <button id="tab-private" onclick="switchChat('private')" class="flex-1 pb-2 text-gray-500">ЛС Админ</button>
                 </div>
-                <div id="chat-box" class="h-44 overflow-y-auto text-left text-[11px] mb-3 space-y-2 pr-2"></div>
+                <div id="chat-box" class="h-40 overflow-y-auto text-left text-[11px] mb-3 space-y-2 pr-2"></div>
                 <div class="flex gap-2">
                     <input type="text" id="msg-input" placeholder="Написать..." class="flex-1 p-3 rounded-xl text-xs bg-black/20 outline-none">
                     <button onclick="sendMsg()" class="btn-blue px-4 rounded-xl font-bold">></button>
@@ -78,7 +88,7 @@
 
         <div id="admin-screen" class="hidden-node glass p-6 rounded-[2rem] w-full max-w-lg">
             <div class="flex justify-between mb-4 items-center border-b border-white/10 pb-4">
-                <h2 class="font-bold text-indigo-400 text-sm tracking-widest uppercase">mimi7osApp: ADM</h2>
+                <h2 class="font-bold text-indigo-400 text-sm uppercase">ADM PANEL</h2>
                 <button onclick="location.reload()" class="text-red-500 text-[10px] font-bold uppercase border border-red-500/20 px-2 py-1 rounded">Выход</button>
             </div>
             
@@ -88,30 +98,28 @@
             </div>
 
             <div class="mb-4 bg-black/40 rounded-2xl p-3 border border-white/5">
-                <p class="text-[9px] text-gray-500 font-bold uppercase mb-2">Общий чат (Просмотр):</p>
+                <p class="text-[9px] text-gray-500 font-bold uppercase mb-2">Общий чат:</p>
                 <div id="adm-common-view" class="h-24 overflow-y-auto text-[10px] space-y-1 opacity-80"></div>
             </div>
 
-            <div id="admin-list" class="space-y-1 mb-4 max-h-24 overflow-y-auto border-b border-white/10 pb-4"></div>
+            <div id="admin-list" class="space-y-1 mb-4 max-h-32 overflow-y-auto border-b border-white/10 pb-4"></div>
             
-            <div class="space-y-2 p-3 bg-indigo-500/5 border border-indigo-500/10 rounded-2xl">
-                <p class="text-[9px] text-indigo-400 font-bold uppercase">ЛС первому (@<span id="first-user-name">...</span>):</p>
+            <div class="space-y-2 p-3 bg-indigo-500/5 rounded-2xl border border-indigo-500/10">
+                <p class="text-[9px] text-indigo-400 font-bold uppercase">Ответ первому (@<span id="first-user-name">...</span>):</p>
                 <div class="flex gap-2">
-                    <input type="text" id="adm-msg" placeholder="Текст для #1..." class="flex-1 p-3 rounded-xl text-xs bg-black/30 outline-none">
+                    <input type="text" id="adm-msg" placeholder="Текст..." class="flex-1 p-3 rounded-xl text-xs bg-black/30 outline-none">
                     <button onclick="sendAdmMsg()" class="btn-blue px-4 rounded-xl font-bold text-xs uppercase">Send</button>
                 </div>
-                <hr class="opacity-5 my-2">
-                <button onclick="sendAdmToAll()" class="w-full py-2 text-[9px] bg-indigo-500/10 rounded-lg text-indigo-300 font-bold uppercase tracking-widest">Отправить в общий чат</button>
+                <button onclick="sendAdmToAll()" class="w-full py-2 mt-2 text-[9px] bg-indigo-500/10 rounded-lg text-indigo-300 font-bold uppercase">В общий чат</button>
             </div>
         </div>
     </div>
 
     <div id="edit-modal" class="hidden-node fixed inset-0 bg-black/95 flex items-center justify-center p-6 z-[1000]">
         <div class="glass p-8 rounded-3xl w-full max-w-sm text-center">
-            <h3 class="text-xs font-bold text-gray-500 mb-4 uppercase">Изменить профиль</h3>
             <input type="text" id="new-av" class="w-full p-4 rounded-xl text-4xl mb-4 outline-none">
             <input type="text" id="new-log" class="w-full p-4 rounded-xl mb-6 font-bold outline-none">
-            <button onclick="saveEdit()" class="btn-blue w-full py-4 rounded-xl font-bold mb-3 uppercase">Сохранить</button>
+            <button onclick="saveEdit()" class="btn-blue w-full py-4 rounded-xl font-bold mb-3 uppercase tracking-widest">Сохранить</button>
             <button onclick="deleteAccount()" class="w-full py-3 rounded-xl bg-red-500/10 text-red-500 text-[10px] font-bold uppercase mb-4">Удалить аккаунт</button>
             <button onclick="closeEdit()" class="text-gray-500 text-[10px] uppercase font-bold">Закрыть</button>
         </div>
@@ -122,10 +130,7 @@
         const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6cXd5eGN5YnVxaGpzbmpwdW9lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5MDExMTIsImV4cCI6MjA4NjQ3NzExMn0.BX7jXhMzSAef3ln5wy8le6nG45me4KnFRbi66482uYo";
         const _supabase = supabase.createClient(SB_URL, SB_KEY);
 
-        let currentUser = null, isLogin = true, clicks = 0;
-        let config = { site_pass: "1234", admin_online: false, site_active: true };
-        let activeTab = 'common';
-        let firstUserInQueue = null;
+        let currentUser = null, isLogin = true, clicks = 0, config = { site_pass: "1234", admin_online: false, site_active: true }, activeTab = 'common', firstUserInQueue = null;
 
         async function init() {
             const { data } = await _supabase.from('settings').select('*').eq('id', 1).single();
@@ -147,14 +152,13 @@
                 document.getElementById('adm-dot').className = `w-2 h-2 rounded-full mr-1 ${config.admin_online ? 'bg-green-500' : 'bg-red-500'}`;
                 document.getElementById('adm-txt').innerText = config.admin_online ? 'On' : 'Off';
             }
-            if (currentUser) {
-                updateQueue();
-                loadMessages();
-            }
-            if (!document.getElementById('admin-screen').classList.contains('hidden-node')) {
-                loadAdmList();
-                loadCommonForAdmin();
-            }
+            if (currentUser) { updateQueue(); loadMessages(); }
+            if (!document.getElementById('admin-screen').classList.contains('hidden-node')) { loadAdmList(); loadCommonForAdmin(); }
+        }
+
+        function buyVip(places, stars) {
+            const text = `Привет! Хочу пропустить ${places} человек в очереди mimi7osApp за ${stars} звезд. Мой ник: ${currentUser.tg_login}`;
+            window.open(`https://t.me/Maksim14215?text=${encodeURIComponent(text)}`, '_blank');
         }
 
         async function loadCommonForAdmin() {
@@ -180,38 +184,27 @@
 
         async function loadMessages() {
             let query = _supabase.from('messages').select('*').order('created_at', { ascending: true });
-            if (activeTab === 'common') {
-                query = query.eq('is_private', false);
-            } else {
-                query = query.eq('is_private', true).or(`sender.eq.${currentUser.tg_login},receiver.eq.${currentUser.tg_login}`);
-            }
+            if (activeTab === 'common') query = query.eq('is_private', false);
+            else query = query.eq('is_private', true).or(`sender.eq.${currentUser.tg_login},receiver.eq.${currentUser.tg_login}`);
             const { data } = await query.limit(40);
-            document.getElementById('chat-box').innerHTML = data.map(m => `
-                <div class="mb-1">
-                    <b class="${m.sender.includes('ADMIN') ? 'text-indigo-400' : 'text-gray-500'}">${m.sender}:</b> ${m.text}
-                </div>
-            `).join('');
+            document.getElementById('chat-box').innerHTML = data.map(m => `<div class="mb-1"><b class="${m.sender.includes('ADMIN') ? 'text-indigo-400' : 'text-gray-500'}">${m.sender}:</b> ${m.text}</div>`).join('');
         }
 
         async function sendMsg() {
-            const t = document.getElementById('msg-input').value;
-            if(!t) return;
+            const t = document.getElementById('msg-input').value; if(!t) return;
             const msg = { sender: currentUser.tg_login, text: t, is_private: (activeTab === 'private') };
             if (activeTab === 'private') msg.receiver = 'ADMIN';
-            await _supabase.from('messages').insert([msg]);
-            document.getElementById('msg-input').value = '';
+            await _supabase.from('messages').insert([msg]); document.getElementById('msg-input').value = '';
         }
 
         async function sendAdmMsg() {
-            const t = document.getElementById('adm-msg').value;
-            if(!t || !firstUserInQueue) return alert("!");
+            const t = document.getElementById('adm-msg').value; if(!t || !firstUserInQueue) return;
             await _supabase.from('messages').insert([{ sender: 'ADMIN', receiver: firstUserInQueue.tg_login, text: t, is_private: true }]);
             document.getElementById('adm-msg').value = '';
         }
 
         async function sendAdmToAll() {
-            const t = document.getElementById('adm-msg').value;
-            if(!t) return;
+            const t = document.getElementById('adm-msg').value; if(!t) return;
             await _supabase.from('messages').insert([{ sender: 'ADMIN', text: t, is_private: false }]);
             document.getElementById('adm-msg').value = '';
         }
@@ -233,7 +226,7 @@
             document.getElementById('admin-list').innerHTML = data.map((u, i) => `
                 <div class="flex items-center justify-between bg-white/5 p-2 rounded-xl text-[10px] mb-1">
                     <div class="flex items-center gap-2"><span>${u.avatar}</span><b>${u.tg_login}</b></div>
-                    <button onclick="delUser('${u.id}')" class="text-red-500 font-bold uppercase px-2">Del</button>
+                    <button onclick="delUser('${u.id}')" class="text-red-500 font-bold uppercase px-2 italic">Del</button>
                 </div>
             `).join('');
             document.getElementById('adm-status-btn').innerText = config.admin_online ? "ADMIN: ONLINE" : "ADMIN: OFFLINE";
@@ -244,23 +237,17 @@
         function checkSitePass() { if (document.getElementById('site-pass').value === config.site_pass) { document.getElementById('site-lock').classList.add('hidden-node'); document.getElementById('auth-screen').classList.remove('hidden-node'); } else alert("!"); }
         function toggleMode() { isLogin = !isLogin; document.getElementById('auth-title').innerText = isLogin ? "ВОЙТИ" : "РЕГИСТРАЦИЯ"; document.getElementById('reg-fields').classList.toggle('hidden-node', isLogin); }
         async function handleAuth() {
-            let log = document.getElementById('login').value.trim();
-            let pas = document.getElementById('pass').value.trim();
-            if(!log || !pas) return;
-            if(!log.startsWith('@')) log = '@' + log;
+            let log = document.getElementById('login').value.trim(); let pas = document.getElementById('pass').value.trim();
+            if(!log || !pas) return; if(!log.startsWith('@')) log = '@' + log;
             if (isLogin) {
                 const { data } = await _supabase.from('queue').select('*').eq('tg_login', log).eq('password', pas).single();
-                if(!data) return alert("!");
-                currentUser = data;
+                if(!data) return alert("!"); currentUser = data;
             } else {
                 const { data, error } = await _supabase.from('queue').insert([{ tg_login: log, password: pas, avatar: document.getElementById('avatar').value || '👤' }]).select();
-                if(error) return alert("!");
-                currentUser = data[0];
+                if(error) return alert("!"); currentUser = data[0];
             }
-            document.getElementById('auth-screen').classList.add('hidden-node');
-            document.getElementById('main-screen').classList.remove('hidden-node');
-            document.getElementById('u-avatar').innerText = currentUser.avatar;
-            document.getElementById('u-name').innerText = currentUser.tg_login;
+            document.getElementById('auth-screen').classList.add('hidden-node'); document.getElementById('main-screen').classList.remove('hidden-node');
+            document.getElementById('u-avatar').innerText = currentUser.avatar; document.getElementById('u-name').innerText = currentUser.tg_login;
             sync();
         }
         async function toggleAdminStatus() { await _supabase.from('settings').update({ admin_online: !config.admin_online }).eq('id', 1); }
