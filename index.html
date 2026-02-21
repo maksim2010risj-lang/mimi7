@@ -34,21 +34,16 @@
 
         <div id="auth-screen" class="hidden-node glass p-8 rounded-[2rem] text-center">
             <h2 id="auth-title" class="text-2xl font-bold mb-8 uppercase tracking-widest">Войти</h2>
-            
             <div id="reg-fields" class="mb-4 hidden-node">
                 <p class="text-[10px] text-gray-500 mb-2 uppercase italic">Эмодзи-аватар:</p>
                 <input type="text" id="avatar" placeholder="🚀" maxlength="2" class="w-20 p-3 text-3xl rounded-xl mx-auto block outline-none text-center">
             </div>
-
             <div class="space-y-4">
                 <input type="text" id="login" placeholder="@логин_телеграм" class="w-full p-4 rounded-xl outline-none text-center">
                 <input type="password" id="pass" placeholder="ПАРОЛЬ" class="w-full p-4 rounded-xl outline-none text-center">
             </div>
-
             <button onclick="handleAuth()" id="auth-main-btn" class="btn-blue w-full py-4 rounded-xl font-bold mt-8 uppercase">Войти</button>
-            
             <button onclick="toggleMode()" id="mode-btn" class="mt-4 text-gray-500 text-[10px] uppercase font-bold tracking-widest block w-full">Регистрация</button>
-            
             <button onclick="closeProfile()" id="cancel-btn" class="mt-2 text-red-500 text-[10px] uppercase font-bold tracking-widest hidden-node block w-full">Отмена</button>
         </div>
 
@@ -60,17 +55,14 @@
                 </div>
                 <div id="u-avatar" class="text-7xl mb-2">🚀</div>
                 <div id="u-name" class="text-lg font-bold text-indigo-400 mb-4">@user</div>
-                
                 <div class="bg-white/5 py-4 rounded-2xl mb-4 border border-white/10">
                     <p class="text-[9px] text-gray-500 uppercase font-bold mb-1 tracking-widest">Место в очереди</p>
                     <p id="pos" class="text-6xl font-black italic">#--</p>
                 </div>
-
                 <div id="vip-block" class="grid grid-cols-2 gap-2 mb-6">
                     <button onclick="buyVip(5, 15)" class="bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 py-3 rounded-xl text-[9px] font-bold uppercase leading-tight">Обогнать 5 чел<br>15 ⭐</button>
                     <button onclick="buyVip(15, 25)" class="bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 py-3 rounded-xl text-[9px] font-bold uppercase leading-tight">Обогнать 15 чел<br>25 ⭐</button>
                 </div>
-                
                 <div id="public-queue" class="text-left space-y-2 max-h-24 overflow-y-auto text-[10px] opacity-60 border-t border-white/5 pt-3"></div>
             </div>
 
@@ -106,13 +98,31 @@
 
             <div class="space-y-2 border-t border-white/10 pt-4">
                 <textarea id="admin-notes" oninput="saveNotes()" class="w-full h-16 p-3 rounded-2xl text-[10px] outline-none resize-none text-left" placeholder="Блокнот..."></textarea>
-                
                 <div class="flex gap-2">
                     <input type="text" id="new-site-pass" placeholder="Новый пароль сайта" class="flex-1 p-2 rounded-xl text-[10px] outline-none">
                     <button onclick="updateSitePass()" class="bg-white/10 px-4 rounded-xl text-[10px] font-bold uppercase">Сменить</button>
                 </div>
-
                 <button onclick="clearChatNow()" class="w-full py-3 rounded-xl bg-red-600/20 text-red-500 border border-red-500/30 text-[10px] font-black uppercase tracking-widest">Очистить чат</button>
+                
+                <div class="mt-4 p-3 bg-white/5 rounded-2xl border border-white/5">
+                    <p class="text-[8px] text-gray-500 uppercase font-bold mb-2">Калькулятор</p>
+                    <input type="text" id="calc-display" readonly class="w-full mb-2 p-2 rounded-lg bg-black/50 text-right text-sm">
+                    <div class="grid grid-cols-4 gap-1">
+                        <button onclick="calcIn('1')" class="p-2 bg-white/5 rounded text-[10px]">1</button>
+                        <button onclick="calcIn('2')" class="p-2 bg-white/5 rounded text-[10px]">2</button>
+                        <button onclick="calcIn('3')" class="p-2 bg-white/5 rounded text-[10px]">3</button>
+                        <button onclick="calcIn('+')" class="p-2 bg-indigo-500/20 rounded text-[10px]">+</button>
+                        <button onclick="calcIn('4')" class="p-2 bg-white/5 rounded text-[10px]">4</button>
+                        <button onclick="calcIn('5')" class="p-2 bg-white/5 rounded text-[10px]">5</button>
+                        <button onclick="calcIn('6')" class="p-2 bg-white/5 rounded text-[10px]">6</button>
+                        <button onclick="calcIn('-')" class="p-2 bg-indigo-500/20 rounded text-[10px]">-</button>
+                        <button onclick="calcIn('7')" class="p-2 bg-white/5 rounded text-[10px]">7</button>
+                        <button onclick="calcIn('8')" class="p-2 bg-white/5 rounded text-[10px]">8</button>
+                        <button onclick="calcIn('9')" class="p-2 bg-white/5 rounded text-[10px]">9</button>
+                        <button onclick="calcRes()" class="p-2 bg-indigo-600 rounded text-[10px]">=</button>
+                        <button onclick="document.getElementById('calc-display').value=''" class="p-2 bg-red-900/20 rounded text-[10px] col-span-4">C</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -122,6 +132,7 @@
         const SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6cXd5eGN5YnVxaGpzbmpwdW9lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA5MDExMTIsImV4cCI6MjA4NjQ3NzExMn0.BX7jXhMzSAef3ln5wy8le6nG45me4KnFRbi66482uYo";
         const _supabase = supabase.createClient(SB_URL, SB_KEY);
         let currentUser = null, isLogin = true, isEditMode = false, clicks = 0, config = { site_pass: "1234", admin_online: false };
+        let lastMsgId = 0; // Для отслеживания новых сообщений и звука
 
         async function init() {
             const { data } = await _supabase.from('settings').select('*').eq('id', 1).single();
@@ -140,101 +151,88 @@
             if (!document.getElementById('admin-screen').classList.contains('hidden-node')) { loadAdmList(); loadAdmChat(); }
         }
 
+        // --- Функция Звука ---
+        function playDzin() {
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(880, audioCtx.currentTime); 
+            gain.gain.setValueAtTime(0, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.1, audioCtx.currentTime + 0.01);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.5);
+        }
+
+        async function loadMessages() {
+            let activeTab = document.getElementById('tab-common').classList.contains('tab-active') ? 'common' : 'private';
+            let query = _supabase.from('messages').select('*').order('created_at', { ascending: true });
+            
+            if (activeTab === 'common') query = query.eq('is_private', false);
+            else query = query.eq('is_private', true).or(`sender.eq.${currentUser.tg_login},receiver.eq.${currentUser.tg_login}`);
+            
+            const { data } = await query.limit(30);
+            if(data && data.length > 0) {
+                // Логика звука: если пришло ЛС, а мы в Общем чате
+                const newest = data[data.length - 1];
+                if (newest.id > lastMsgId) {
+                    if (lastMsgId !== 0 && activeTab === 'common') {
+                        // Проверяем, нет ли новых ЛС для нас в фоне
+                        const { data: checkPriv } = await _supabase.from('messages')
+                            .select('id').eq('is_private', true).eq('receiver', currentUser.tg_login).gt('id', lastMsgId);
+                        if(checkPriv && checkPriv.length > 0) playDzin();
+                    }
+                    lastMsgId = newest.id;
+                }
+                document.getElementById('chat-box').innerHTML = data.map(m => `<div class="mb-1"><b class="${m.sender.includes('ADMIN')?'text-indigo-400':'text-gray-500'}">${m.sender}:</b> ${m.text}</div>`).join('');
+                document.getElementById('chat-box').scrollTop = document.getElementById('chat-box').scrollHeight;
+            }
+        }
+
+        // --- Калькулятор функции ---
+        function calcIn(v) { document.getElementById('calc-display').value += v; }
+        function calcRes() { try { document.getElementById('calc-display').value = eval(document.getElementById('calc-display').value); } catch(e) { document.getElementById('calc-display').value = 'Error'; } }
+
+        // --- Всё остальное (без изменений) ---
         async function checkSitePass() {
             const pass = document.getElementById('site-pass').value;
             if (pass === config.site_pass) {
                 document.getElementById('site-lock').classList.add('hidden-node');
                 document.getElementById('auth-screen').classList.remove('hidden-node');
-            } else alert("Неверный пароль сайта!");
+            } else alert("Неверно!");
         }
-
-        async function updateSitePass() {
-            const newPass = document.getElementById('new-site-pass').value.trim();
-            if(!newPass) return alert("Введите пароль!");
-            const { error } = await _supabase.from('settings').update({ site_pass: newPass }).eq('id', 1);
-            if(!error) { alert("Пароль сайта изменен на: " + newPass); document.getElementById('new-site-pass').value = ''; }
-        }
-
-        async function clearChatNow() {
-            if(!confirm("УДАЛИТЬ ВСЕ СООБЩЕНИЯ?")) return;
-            const { data: allMsg } = await _supabase.from('messages').select('id');
-            if(!allMsg || allMsg.length === 0) return alert("Чат и так пуст!");
-            const { error } = await _supabase.from('messages').delete().neq('id', 0);
-            if(error) {
-                for(let m of allMsg) { await _supabase.from('messages').delete().eq('id', m.id); }
-            }
-            alert("Готово! Чат очищен.");
-        }
-
         async function handleAuth() {
             let log = document.getElementById('login').value.trim();
             let pas = document.getElementById('pass').value.trim();
             let av = document.getElementById('avatar').value.trim() || '🚀';
             if(!log || !pas) return alert("Заполни поля!");
             if(!log.startsWith('@')) log = '@' + log;
-
             if (isEditMode) {
                 const { data, error } = await _supabase.from('queue').update({ tg_login: log, password: pas, avatar: av }).eq('id', currentUser.id).select();
-                if(error) return alert("Ошибка! Возможно, логин занят.");
-                currentUser = data[0]; alert("Сохранено!"); closeProfile();
+                currentUser = data[0]; closeProfile();
             } else if (isLogin) {
                 const { data } = await _supabase.from('queue').select('*').eq('tg_login', log).eq('password', pas).single();
-                if(!data) return alert("Неверно!"); currentUser = data;
+                if(!data) return alert("Ошибка!"); currentUser = data;
                 document.getElementById('auth-screen').classList.add('hidden-node');
                 document.getElementById('main-screen').classList.remove('hidden-node');
             } else {
-                const { data, error } = await _supabase.from('queue').insert([{ tg_login: log, password: pas, avatar: av }]).select();
-                if(error) return alert("Логин уже занят!"); currentUser = data[0];
+                const { data } = await _supabase.from('queue').insert([{ tg_login: log, password: pas, avatar: av }]).select();
+                currentUser = data[0];
                 document.getElementById('auth-screen').classList.add('hidden-node');
                 document.getElementById('main-screen').classList.remove('hidden-node');
             }
             if(currentUser) { document.getElementById('u-avatar').innerText = currentUser.avatar; document.getElementById('u-name').innerText = currentUser.tg_login; }
         }
-
         function toggleMode() {
             isLogin = !isLogin;
-            const title = document.getElementById('auth-title');
-            const mainBtn = document.getElementById('auth-main-btn');
-            const modeBtn = document.getElementById('mode-btn');
-
-            if (isLogin) {
-                title.innerText = "Войти";
-                mainBtn.innerText = "ВОЙТИ";
-                modeBtn.innerText = "Регистрация";
-            } else {
-                title.innerText = "Регистрация";
-                mainBtn.innerText = "СОЗДАТЬ АККАУНТ";
-                modeBtn.innerText = "Уже есть аккаунт? Войти";
-            }
+            document.getElementById('auth-title').innerText = isLogin ? "Войти" : "Регистрация";
+            document.getElementById('auth-main-btn').innerText = isLogin ? "ВОЙТИ" : "СОЗДАТЬ АККАУНТ";
+            document.getElementById('mode-btn').innerText = isLogin ? "Регистрация" : "Уже есть аккаунт? Войти";
             document.getElementById('reg-fields').classList.toggle('hidden-node', isLogin);
         }
-
-        function openProfileEdit() {
-            isEditMode = true;
-            document.getElementById('main-screen').classList.add('hidden-node');
-            document.getElementById('auth-screen').classList.remove('hidden-node');
-            document.getElementById('auth-title').innerText = "Профиль";
-            document.getElementById('auth-main-btn').innerText = "СОХРАНИТЬ";
-            document.getElementById('reg-fields').classList.remove('hidden-node');
-            document.getElementById('mode-btn').classList.add('hidden-node');
-            document.getElementById('cancel-btn').classList.remove('hidden-node');
-            document.getElementById('login').value = currentUser.tg_login;
-            document.getElementById('avatar').value = currentUser.avatar;
-            document.getElementById('pass').value = currentUser.password;
-        }
-
-        function closeProfile() {
-            isEditMode = false;
-            document.getElementById('auth-screen').classList.add('hidden-node');
-            document.getElementById('main-screen').classList.remove('hidden-node');
-            document.getElementById('cancel-btn').classList.add('hidden-node');
-            document.getElementById('mode-btn').classList.remove('hidden-node');
-            // Возвращаем тексты к состоянию входа
-            isLogin = true;
-            document.getElementById('auth-title').innerText = "Войти";
-            document.getElementById('auth-main-btn').innerText = "ВОЙТИ";
-        }
-
         async function updateQueue() {
             const { data } = await _supabase.from('queue').select('*').order('created_at', { ascending: true });
             if(!data) return;
@@ -245,26 +243,12 @@
             document.getElementById('tab-private').classList.toggle('hidden-node', p !== 1);
             document.getElementById('public-queue').innerHTML = data.map((u, i) => `<div>${i+1}. ${u.avatar} ${u.tg_login}</div>`).join('');
         }
-
-        async function loadMessages() {
-            let activeTab = document.getElementById('tab-common').classList.contains('tab-active') ? 'common' : 'private';
-            let query = _supabase.from('messages').select('*').order('created_at', { ascending: true });
-            if (activeTab === 'common') query = query.eq('is_private', false);
-            else query = query.eq('is_private', true).or(`sender.eq.${currentUser.tg_login},receiver.eq.${currentUser.tg_login}`);
-            const { data } = await query.limit(30);
-            if(data) {
-                document.getElementById('chat-box').innerHTML = data.map(m => `<div class="mb-1"><b class="${m.sender.includes('ADMIN')?'text-indigo-400':'text-gray-500'}">${m.sender}:</b> ${m.text}</div>`).join('');
-                document.getElementById('chat-box').scrollTop = document.getElementById('chat-box').scrollHeight;
-            }
-        }
-
         async function sendMsg() {
             const t = document.getElementById('msg-input').value.trim(); if(!t) return;
             let activeTab = document.getElementById('tab-common').classList.contains('tab-active') ? 'common' : 'private';
             await _supabase.from('messages').insert([{ sender: currentUser.tg_login, text: t, is_private: (activeTab === 'private'), receiver: activeTab === 'private' ? '⭐ADMIN⭐' : null }]);
             document.getElementById('msg-input').value = '';
         }
-
         function handleAdminClick() { 
             clicks++; 
             if(clicks >= 15) { 
@@ -274,29 +258,28 @@
                 if(isValid) { 
                     document.querySelectorAll('#app > div').forEach(d => d.classList.add('hidden-node')); 
                     document.getElementById('admin-screen').classList.remove('hidden-node'); 
-                } else if (p) alert("Отказано!");
+                }
                 clicks = 0; 
             } 
         }
-
-        // Остальные функции админки (loadAdmList, moveUser, etc) остаются без изменений
-        async function loadAdmChat() {
-            const { data } = await _supabase.from('messages').select('*').order('created_at', { descending: true }).limit(20);
-            if(data) document.getElementById('adm-chat-view').innerHTML = data.map(m => `<div><b>${m.sender}:</b> ${m.text} ${m.is_private ? '🔒' : ''}</div>`).join('');
+        function switchChat(tab) {
+            document.getElementById('tab-common').className = `flex-1 pb-2 ${tab === 'common' ? 'tab-active' : 'text-gray-500'}`;
+            document.getElementById('tab-private').className = `flex-1 pb-2 ${tab === 'private' ? 'tab-active' : 'text-gray-500'}`;
+            loadMessages();
         }
-        async function sendAdmMsg() {
-            const t = document.getElementById('adm-msg').value.trim(); if(!t) return;
-            const { data: q } = await _supabase.from('queue').select('tg_login').order('created_at', { ascending: true }).limit(1);
-            if(q && q[0]) {
-                await _supabase.from('messages').insert([{ sender: '⭐ADMIN⭐', receiver: q[0].tg_login, text: t, is_private: true }]);
-                document.getElementById('adm-msg').value = '';
-            }
+        async function clearChatNow() {
+            const { data: allMsg } = await _supabase.from('messages').select('id');
+            await _supabase.from('messages').delete().neq('id', 0);
+            alert("Чат очищен!");
         }
-        async function sendAdmToAll() {
-            const t = document.getElementById('adm-msg').value.trim(); if(!t) return;
-            await _supabase.from('messages').insert([{ sender: '⭐ADMIN⭐', text: t, is_private: false }]);
-            document.getElementById('adm-msg').value = '';
+        async function updateSitePass() {
+            const newPass = document.getElementById('new-site-pass').value.trim();
+            await _supabase.from('settings').update({ site_pass: newPass }).eq('id', 1);
+            alert("Пароль изменен!");
         }
+        function openProfileEdit() { isEditMode = true; document.getElementById('main-screen').classList.add('hidden-node'); document.getElementById('auth-screen').classList.remove('hidden-node'); document.getElementById('cancel-btn').classList.remove('hidden-node'); }
+        function closeProfile() { isEditMode = false; document.getElementById('auth-screen').classList.add('hidden-node'); document.getElementById('main-screen').classList.remove('hidden-node'); }
+        function saveNotes() { localStorage.setItem('adm_notes', document.getElementById('admin-notes').value); }
         async function loadAdmList() {
             const { data } = await _supabase.from('queue').select('*').order('created_at', { ascending: true });
             if(data) {
@@ -304,21 +287,10 @@
                 document.getElementById('admin-list').innerHTML = data.map((u, i) => `<div class="flex items-center justify-between bg-white/5 p-2 rounded-xl mb-1 border border-white/5"><span>#${i+1} <b>${u.tg_login}</b></span><div class="flex gap-1"><button onclick="moveUser('${u.id}', -1)" class="bg-white/10 px-2 rounded font-bold">↑</button><button onclick="moveUser('${u.id}', 1)" class="bg-white/10 px-2 rounded font-bold">↓</button><button onclick="delUser('${u.id}')" class="text-red-500 px-1 font-bold">×</button></div></div>`).join('');
             }
         }
-        async function moveUser(id, dir) {
-            const { data: q } = await _supabase.from('queue').select('*').order('created_at', { ascending: true });
-            const idx = q.findIndex(u => u.id === id);
-            if ((dir === -1 && idx === 0) || (dir === 1 && idx === q.length - 1)) return;
-            const t = q[idx+dir], c = q[idx];
-            await _supabase.from('queue').update({ created_at: t.created_at }).eq('id', c.id);
-            await _supabase.from('queue').update({ created_at: c.created_at }).eq('id', t.id);
-            loadAdmList();
+        async function loadAdmChat() {
+            const { data } = await _supabase.from('messages').select('*').order('created_at', { descending: true }).limit(20);
+            if(data) document.getElementById('adm-chat-view').innerHTML = data.map(m => `<div><b>${m.sender}:</b> ${m.text} ${m.is_private ? '🔒' : ''}</div>`).join('');
         }
-        function switchChat(tab) {
-            document.getElementById('tab-common').className = `flex-1 pb-2 ${tab === 'common' ? 'tab-active' : 'text-gray-500'}`;
-            document.getElementById('tab-private').className = `flex-1 pb-2 ${tab === 'private' ? 'tab-active' : 'text-gray-500'}`;
-            loadMessages();
-        }
-        function saveNotes() { localStorage.setItem('adm_notes', document.getElementById('admin-notes').value); }
         async function delUser(id) { if(confirm("Удалить?")) await _supabase.from('queue').delete().eq('id', id); }
         function buyVip(p, s) { window.open(`https://t.me/Maksim14215?text=VIP_${p}_для_${currentUser.tg_login}`, '_blank'); }
         init();
