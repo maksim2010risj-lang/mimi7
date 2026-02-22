@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Космическая Экспансия</title>
+    <style>
+        body {
+            margin: 0;
+            background: #050510;
+            color: #00ffcc;
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #ui {
+            padding: 20px;
+            background: rgba(0, 20, 40, 0.8);
+            border-bottom: 2px solid #00ffcc;
+            width: 100%;
+            text-align: center;
+            z-index: 10;
+        }
+
+        #galaxy {
+            position: relative;
+            width: 100vw;
+            height: 80vh;
+            perspective: 1000px;
+        }
+
+        .planet {
+            position: absolute;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.3s;
+            box-shadow: inset -10px -10px 20px rgba(0,0,0,0.8);
+        }
+
+        .planet:hover {
+            transform: scale(1.2);
+            filter: brightness(1.3);
+        }
+
+        .planet-label {
+            position: absolute;
+            bottom: -25px;
+            width: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            text-align: center;
+            pointer-events: none;
+        }
+
+        #stats span { margin: 0 15px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div id="ui">
+    <h1>🪐 СИСТЕМА «АЛЬФА»</h1>
+    <div id="stats">
+        ЭНЕРГИЯ: <span id="energy">100</span> | 
+        МЕТАЛЛ: <span id="metal">0</span> | 
+        ДЕНЬ: <span id="days">1</span>
+    </div>
+    <p>Кликай по планетам, чтобы добывать ресурсы. Каждое действие тратит энергию.</p>
+</div>
+
+<div id="galaxy"></div>
+
+<script>
+    let energy = 100;
+    let metal = 0;
+    let days = 1;
+
+    const planetsData = [
+        { name: "Марс-2", color: "#ff4d4d", size: 60, top: 20, left: 20, res: "metal" },
+        { name: "Нептуния", color: "#4d94ff", size: 100, top: 50, left: 70, res: "energy" },
+        { name: "Золотая Жила", color: "#ffd700", size: 40, top: 70, left: 30, res: "metal" },
+        { name: "Изумруд", color: "#2ecc71", size: 80, top: 15, left: 60, res: "energy" }
+    ];
+
+    const galaxy = document.getElementById('galaxy');
+
+    function updateUI() {
+        document.getElementById('energy').innerText = Math.floor(energy);
+        document.getElementById('metal').innerText = metal;
+        document.getElementById('days').innerText = days;
+    }
+
+    function createPlanets() {
+        planetsData.forEach(p => {
+            const div = document.createElement('div');
+            div.className = 'planet';
+            div.style.width = p.size + 'px';
+            div.style.height = p.size + 'px';
+            div.style.backgroundColor = p.color;
+            div.style.top = p.top + '%';
+            div.style.left = p.left + '%';
+            div.style.boxShadow = `0 0 20px ${p.color}44`;
+
+            const label = document.createElement('div');
+            label.className = 'planet-label';
+            label.innerText = p.name;
+            div.appendChild(label);
+
+            div.onclick = () => {
+                if (energy >= 5) {
+                    energy -= 5;
+                    if (p.res === "metal") metal += 10;
+                    if (p.res === "energy") energy += 15;
+                    days += 0.5;
+                    updateUI();
+                } else {
+                    alert("Недостаточно энергии! Ждите восстановления...");
+                }
+            };
+
+            galaxy.appendChild(div);
+        });
+    }
+
+    // Регенерация энергии со временем
+    setInterval(() => {
+        if (energy < 100) {
+            energy += 0.5;
+            updateUI();
+        }
+    }, 1000);
+
+    createPlanets();
+</script>
+
+</body>
+</html>
